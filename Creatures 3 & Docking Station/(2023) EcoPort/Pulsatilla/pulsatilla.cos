@@ -1,0 +1,112 @@
+
+* 2 4 64745 - Pulsatilla Shrub
+* 2 8 64745 - Pulsatilla Berry
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you 're not getting extra fruit this way!
+	doif totl 2 4 64745 eq 0
+		setv va00 0
+		reps 2
+			new: simp 2 4 64745 "ecoport_pulsatilla" 2 0 205
+			tick 500
+			addv va00 1
+			doif va00 eq 1
+				mvsf 4739 413
+			elif va00 eq 2
+				mvsf 1853 725
+			endi
+			accg 10
+			rnge 300
+			attr 208
+			elas 0
+		repe
+	endi
+endi
+
+scrp 2 4 64745 10
+	reps 10
+		targ ownr
+		setv va00 posl
+		addv va00 rand 40 140
+		setv va01 post
+		addv va01 rand 60 100
+		new: simp 2 8 64745 "ecoport_pulsatilla" 2 1 206
+		attr 195
+		accg 0
+		bhvr 48
+		elas 5
+
+		emit 6 1
+		fric 100
+		perm rand 40 60
+		setv ov42 0
+		tick rand 100 500
+		mvsf va00 va01
+	repe
+endm
+
+scrp 2 4 64745 9
+	setv va00 0
+	inst
+	esee 2 8 64745
+		addv va00 1
+	next
+
+	doif va00 lt 10
+		setv va00 posl
+		addv va00 rand 40 140
+		setv va01 post
+		addv va01 rand 60 100
+		new: simp 2 8 64745 "ecoport_pulsatilla" 2 1 206
+		attr 195
+		accg 0
+		bhvr 48
+		elas 5
+
+		emit 6 1
+		fric 100
+		perm rand 40 60
+		setv ov42 0
+		tick rand 100 500
+		mvsf va00 va01
+	endi
+endm
+
+scrp 2 8 64745 4
+	accg 5
+	tick rand 100 500
+endm
+
+scrp 2 8 64745 6
+	snde "dr10"
+endm
+
+scrp 2 8 64745 9
+	addv ov50 1
+	doif ov50 gt 50
+		kill ownr
+	endi
+endm
+
+scrp 2 8 64745 12
+	snde "chwp"
+	stim writ from 78 1
+	targ from
+	chem 99 0.25
+	kill ownr
+
+endm
+
+rscr
+enum 2 4 64745
+	kill targ
+next
+enum 2 8 64745
+	kill targ
+next
+scrx 2 4 64745 10
+scrx 2 8 64745 4
+scrx 2 8 64745 12
+scrx 2 4 64745 9
+scrx 2 4 64745 10

@@ -1,0 +1,445 @@
+* 2 23 64742 = vendor
+* 2 3 64742 = trumpet seed
+* 2 4 64742 = trumpet plant
+* 2 8 64742 = trumpet fruit
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you 're not getting extra plants this way!
+	setv va00 0
+	enum 2 23 64742
+		addv va00 1
+	next
+	enum 2 3 64742
+		addv va00 1
+	next
+	enum 2 4 64742
+		addv va00 1
+	next
+	doif va00 eq 0
+
+		inst
+		reps 5
+			new: simp 2 3 64742 "ecoport_trumpet" 37 0 500
+			attr 195
+			bhvr 48
+			mvsf 960 427
+			perm 100
+			velo rand -15 10 rand 3 5
+			elas 50
+			accg 5
+			aero 0
+			emit 7 1
+			setv ov42 rand 0 50
+			setv ov69 1
+			tick 30
+		repe
+	endi
+endi
+* But I will move the vendor for you in case you lost it.
+setv va00 0
+enum 2 23 64742
+	addv va00 1
+next
+doif va00 eq 0
+
+	new: simp 2 23 64742 "ecoport_trumpet" 37 27 500
+	attr 215
+	aero 10
+	perm 60
+	accg 5
+	elas 10
+	fric 90
+	doif eame "engine_no_auxiliary_bootstrap_1" = 0
+		mvsf 748 709
+	else
+		setv va00 game "CreatorX"
+		setv va01 game "CreatorY"
+		doif va00 eq 0 and va01 eq 0
+			setv va00 6110
+			setv va01 9200
+		endi
+		doif tmvt va00 va01 eq 1
+			mvsf va00 va01
+		else
+			mvsf va00 va01
+		endi
+	endi
+else
+	enum 2 23 64742
+		doif eame "engine_no_auxiliary_bootstrap_1" = 0
+			mvsf 748 709
+			accg 5
+		else
+			setv va00 game "CreatorX"
+			setv va01 game "CreatorY"
+			doif va00 eq 0 and va01 eq 0
+				setv va00 6110
+				setv va01 9200
+			endi
+			doif tmvt va00 va01 eq 1
+				mvsf va00 va01
+			else
+				mvsf va00 va01
+			endi
+		endi
+
+	next
+endi
+
+scrp 2 23 64742 1
+	anim [0 1 2 3 4 5 6 7 8 9 8 7 6 5 4 3 2 1 0]
+	stim writ from 90 1
+	wait 10
+	snde "pop3"
+	setv va02 posl
+	addv va02 8
+	setv va03 post
+	addv va03 10
+	inst
+	new: simp 2 3 64742 "ecoport_trumpet" 37 0 500
+	bhvr 48
+	attr 195
+	perm 100
+	velo rand -5 5 rand -20 -15
+	elas 50
+	accg 5
+	aero 0
+	emit 7 1
+	setv ov42 rand 0 50
+	setv ov69 0
+	tick 30
+	mvsf va02 va03
+endm
+
+
+scrp 2 3 64742 9
+* Overpopulation check
+* Global population cap: 100
+	inst
+	setv va10 0
+	enum 2 3 64742
+		addv va10 1
+	next
+	enum 2 4 64742
+		addv va10 1
+	next
+	doif va10 gt 100
+		kill ownr
+	endi
+* Local population cap: 10
+	rnge 500
+	setv va10 0
+	esee 2 3 64742
+		addv va10 1
+	next
+	esee 2 4 64742
+		addv va10 1
+	next
+	doif va10 gt 10
+		kill ownr
+	endi
+	addv ov42 1
+* Check for crowding before sprouting 
+	doif ov42 ge 50
+		rnge 100
+		setv va10 0
+		esee 2 4 64742
+			addv va10 1
+		next
+		doif va10 ge 2
+			stop
+		endi
+	endi
+
+	doif ov42 ge 50 and fall eq 0
+		doif prop room targ 4 lt 0.2
+			kill ownr
+		else
+			doif rtyp room targ eq 8 or rtyp room targ eq 9
+				kill ownr
+			endi
+			setv va00 posl
+			setv va01 post
+			addv va01 -90
+			addv va00 -45
+			setv va90 perm
+			setv va69 ov69
+			inst
+			new: comp 2 4 64742 "ecoport_trumpet" 37 1 rand 500 600
+
+			perm va90
+			rnge 90
+			elas 0
+			attr 192
+			pat: dull 11 "ecoport_trumpet" 9 16 44 1
+			pat: dull 12 "ecoport_trumpet" 14 25 7 1
+			pat: dull 13 "ecoport_trumpet" 19 52 30 1
+			setv ov69 va69
+			setv ov11 0
+			setv ov21 1
+			setv ov12 0
+			setv ov22 1
+			setv ov13 0
+			setv ov23 1
+			doif ov69 eq 1
+				tick 30
+				anim [0 1 2 3 4 5 6 7]
+				setv ov42 7
+				setv ov43 0
+			else
+				setv ov42 0
+				setv ov43 0
+				tick 100
+			endi
+			mvsf va00 va01
+			kill ownr
+		endi
+	endi
+endm
+
+scrp 2 4 64742 9
+* Age
+	addv ov42 1
+* Change pose as you grow
+	doif ov42 eq 0
+		pose 0
+	elif ov42 eq 1
+		pose 1
+	elif ov42 eq 2
+		pose 2
+	elif ov42 eq 3
+		pose 3
+	elif ov42 eq 4
+		pose 4
+	elif ov42 eq 5
+		pose 5
+	elif ov42 eq 6
+		pose 6
+	elif ov42 eq 7
+		pose 7
+	elif ov42 le 14
+* Grow fruit if you're old enough
+	elif ov42 le 250
+* Choose a fruit
+		setv va50 rand 1 3
+* If fruit 1 is chosen
+		doif va50 eq 1 and ov21 eq 1
+			doif ov11 lt 4
+				addv ov11 1
+				part 11
+				pose ov11
+			else
+				inst
+				setv ov21 0
+				setv va90 posl
+				addv va90 16
+				setv va91 post
+				addv va91 50
+				part 11
+				pose 0
+				new: simp 2 8 64742 "ecoport_trumpet" 37 0 rand 600 700
+				pose 13
+				bhvr 48
+				perm 100
+
+				accg 0
+				attr 195
+				elas 5
+				emit 6 1
+				mvsf va90 va91
+				slow
+			endi
+* If fruit 2 is chosen
+		elif va50 eq 2 and ov22 eq 1
+			doif ov12 lt 4
+				addv ov12 1
+				part 12
+				pose ov12
+			else
+				inst
+				setv ov22 0
+				setv va90 posl
+				addv va90 25
+				setv va91 post
+				addv va91 13
+				part 12
+				pose 0
+				new: simp 2 8 64742 "ecoport_trumpet" 37 0 rand 600 700
+
+				pose 18
+				bhvr 48
+				perm 100
+
+				accg 0
+				attr 195
+				elas 5
+				emit 6 1
+				mvsf va90 va91
+				slow
+			endi
+
+
+		elif va50 eq 3 and ov23 eq 1
+			doif ov13 lt 4
+				addv ov13 1
+				part 13
+				pose ov13
+			else
+				inst
+				setv ov23 0
+				setv va90 posl
+				addv va90 52
+				setv va91 post
+				addv va91 36
+				part 13
+				pose 0
+
+				new: simp 2 8 64742 "ecoport_trumpet" 37 0 rand 600 700
+
+				pose 23
+				bhvr 48
+				perm 100
+
+				accg 0
+				attr 195
+				elas 5
+				emit 6 1
+				mvsf va90 va91
+				slow
+			endi
+		endi
+	else
+		rnge 90
+		setv va00 0
+		esee 2 8 64742
+			addv va00 1
+		next
+		doif va00 eq 0
+			rnge 600
+			setv va00 0
+			esee 2 4 64742
+				addv va00 1
+			next
+			esee 2 3 64742
+				addv va00 1
+			next
+			doif va00 le 2
+				reps 3
+					setv va11 posx
+					setv va12 posy
+					new: simp 2 3 64742 "ecoport_trumpet" 37 0 rand 500 600
+					tick 30
+					bhvr 48
+					attr 195
+					mvsf va11 va12
+					perm 100
+					velo rand -5 5 rand -5 -1
+					elas 50
+					accg 5
+					aero 0
+					emit 7 1
+					setv ov42 rand 0 50
+					setv ov69 0
+				repe
+
+				kill ownr
+			elif va00 le 9
+				reps rand 1 3
+					setv va11 posx
+					setv va12 posy
+					new: simp 2 3 64742 "ecoport_trumpet" 37 0 rand 500 600
+
+					tick 30
+					bhvr 48
+					attr 195
+					mvsf va11 va12
+					perm 100
+					velo rand -5 5 rand -5 -1
+					elas 50
+					accg 5
+					aero 0
+					emit 7 1
+					setv ov42 rand 0 50
+					setv ov69 0
+				repe
+
+				kill ownr
+			else
+
+				kill ownr
+
+			endi
+		else
+			setv ov42 240
+		endi
+	endi
+endm
+
+scrp 2 8 64742 9
+	addv ov42 1
+	doif ov42 gt 50
+		kill ownr
+	endi
+endm
+
+scrp 2 8 64742 6
+	accg 2
+	tick rand 100 500
+	inst
+	doif pose eq 13
+		pose 24
+	elif pose eq 18
+		pose 25
+	elif pose eq 23
+		pose 26
+	endi
+endm
+
+scrp 2 8 64742 4
+	accg 2
+	inst
+	doif pose eq 13
+		pose 24
+	elif pose eq 18
+		pose 25
+	elif pose eq 23
+		pose 26
+	endi
+endm
+
+
+scrp 2 3 64742 12
+	snde "chwp"
+	stim writ from 77 1
+	kill ownr
+endm
+
+scrp 2 8 64742 12
+	snde "chwp"
+	stim writ from 78 1
+	kill ownr
+endm
+
+rscr
+enum 2 3 64742
+	kill targ
+next
+enum 2 4 64742
+	kill targ
+next
+enum 2 8 64742
+	kill targ
+next
+enum 2 23 64742
+	kill targ
+next
+scrx 2 23 64742 1
+scrx 2 3 64742 9
+scrx 2 3 64742 12
+scrx 2 4 64742 9
+scrx 2 8 64742 4
+scrx 2 8 64742 6
+scrx 2 8 64742 9
+
+scrx 2 8 64742 12

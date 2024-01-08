@@ -1,0 +1,551 @@
+************************************************
+* ECOPORT DOOZER					     *
+* CODE MERCILESSLY STOLEN FROM C2TODS REVAMPED *
+* 2 15 64738 - Doozer				     *
+************************************************
+*
+* Initial version by NeoDement
+* Some script based off Moe's Devil Doozer from https://eemfoo.org/archive/downloads/4c9f
+* Some script also based off Clucky's C12DS Learning Computer from https://eemfoo.org/archive/downloads/de80
+* New sprites/animations by freylaverse
+* Code stripped of hopefully-not-vital functions by freylaverse
+* 
+
+***************
+**SOUNDS USED**
+***************
+* DOOZ - DOZ2 *
+* DOZ2 - DOOS *
+* DOZ3 - DOZ3 *
+***************
+* Sounds were renamed to match Mr nStuff's Doozer DS from https://eemfoo.org/archive/downloads/c18d
+* (to prevent either one having the wrong sounds if both are installed)
+
+*make 5 doozers
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you're not getting extra doozers this way!
+	setv va00 0
+	enum 2 15 64738
+		addv va00 1
+	next
+	doif va00 eq 0
+		reps 5
+			setv va00 rand 1 100
+			doif va00 eq 1
+				setv va01 96
+			elif va00 le 11
+				setv va01 64
+			elif va00 le 31
+				setv va01 32
+			else
+				setv va01 0
+			endi
+			new: simp 2 15 64738 "ecoport_doozer" 128 va01 rand 4500 5500
+			setv ov69 0
+			setv ov70 0
+			tick 1
+			setv va00 rand 0 5
+			doif va00 eq 0
+				mvsf rand 8593 8693 476
+			elif va00 eq 1 or va00 eq 2
+				mvsf rand 2040 2343 714
+			elif va00 eq 3
+				mvsf rand 5380 5480 944
+			elif va00 eq 4
+				mvsf rand 1836 1936 2300
+			else
+				mvsf rand 4817 4917 2367
+			endi
+		repe
+	endi
+endi
+
+
+*Constructor Script
+
+scrp 2 15 64738 10
+
+	inst
+*range is a bit lower than default (500)
+	rnge 400
+	emit 6 0.5
+*physics
+	accg 3
+	aero 2
+	elas 25
+	fric 50
+*Carryable + Mouseable + Activateable + Suffer Collisions + Suffer Physics
+	attr 199
+**Activate 1 + Activate 2 + Hit + Eat + Pick Up
+	bhvr 59
+*X velocity per step
+	setv ov06 3
+*Y velocity per step
+	setv ov07 6
+	perm 100
+*tick rate
+	setv ov00 12
+*tick rate / 3 ( used for applying walk velocity gradually between ticks)
+	setv ov01 ov00
+	divv ov01 3
+*initial tick is overridden just after creation but I'm leaving this line here as a default in case we make a doozer agent or something
+	tick ov00
+*easier to click if we use bounding box instead of pixel perfect
+	tran 0 -1
+*random starting direction
+	setv ov02 rand 0 1
+*variables used to detect when a doozer is stuck in a corner:
+*what position were you at least time the timer ticked?
+	setv ov03 0
+*how long have you been stuck in this same spot?
+	setv ov04 0
+endm
+
+
+
+
+*Collision Script
+
+scrp 2 15 64738 6
+	doif wall eq left
+		setv ov02 1
+	elif wall eq rght
+		setv ov02 0
+	endi
+endm
+
+
+
+
+*Activate 1 Script
+
+scrp 2 15 64738 1
+	inst
+* let the norn know they played with a critter
+* but also give them the chemicals of playing with a toy
+	stim writ from 86 1
+	stim writ from 97 0
+	call 1001 0 0
+endm
+
+*Activate 2 Script
+
+scrp 2 15 64738 2
+	inst
+* let the norn know they played with a critter
+* but also give them the chemicals of playing with a toy
+	stim writ from 86 1
+	stim writ from 97 0
+	call 1001 0 0
+endm
+
+*Talk Script (called by Activate 1 and 2)
+scrp 2 15 64738 1001
+	lock
+	setv velx 0
+	wait 2
+	inst
+*teaching words. a doozer teaches nouns like "food" or "grendel"
+*what type of word is this? for constructing a functional ORDER SHOU string.
+*"perfect " means learn straight away, "learn " means learn gradually.
+	sets va03 "perfect noun "
+*	sets va03 "learn noun "
+*what array name are we looking for?
+	sets va04 "Agent Categories"
+*how many entries are there in "Agent Categories"?
+	setv va52 rean va04
+*grab a random entry from that array (-1 for base 0/1 reasons)
+	subv va52 1
+	setv va51 rand 0 va52
+*start to construct string, starting with the chosen noun
+	doif va51 <> 1
+		sets va50 read va04 va51
+*if va51 was 1, that means it was "hand", so get the hand name instead.
+	elif va51 = 1
+		sets va50 hand
+	endi
+
+
+*randomly choose a direction before talking
+	setv va00 rand 0 1
+*facing left
+*	doif pose le 5
+	doif va00 = 0
+		anim [22 23 24 25 26 25 24 23 22 255]
+		setv ov02 0
+*facing right
+*	elif post gt 5
+	else
+		anim [27 28 29 30 31 30 29 28 27 255]
+		setv ov02 1
+	endi
+
+
+*construct string - "perfect noun N whatever"
+	sets va40 va03
+	adds va40 vtos va51
+	adds va40 " "
+	adds va40 va50
+
+*sound
+	snde "doz2"
+
+* send message to bubble factory to do visuals
+	rtar 1 2 10
+*	say what you mean
+	mesg wrt+ targ 126 va50 ownr 0
+*	show the hidden command
+*	mesg wrt+ targ 126 va40 ownr 0
+	targ ownr
+	wait 10
+
+*now actually say the hidden command so that norns can hear it, repeat it, learn from it
+*	ordr shou va40
+*doing it based on norns that can see it so that RNGE is respected and they dont hear through walls.
+	ordr sign va40
+
+*reset timer for consistency
+	tick 0
+	wait 1
+	tick ov00
+endm
+
+
+**Eat Script - Creatures "take a bite" of the Doozer which makes them panic and jump away, stimming the creature with some "Ate a critter/animal"
+scrp 2 15 64738 12
+	lock
+**tell the norn they ate a critter... but only a little bit
+	stim writ from 80 1
+**make a bite sound	
+	snde "chwp"
+**force it to be dropped if a creature is holding it
+	doif crea carr = 1
+		targ carr
+		drop
+		targ ownr
+	endi
+	wait 7
+**AAAAA DONT EAT ME!!!!
+	snde "doz3"
+	setv vely -35
+**apply random X velocity
+	loop
+		setv va00 rand -1 1
+	untl va00 <> 0
+	mulv va00 20
+	setv velx va00
+**set direction of travel to match new random velocity
+	doif va00 < 0
+		setv ov02 0
+	elif va00 > 0
+		setv ov02 1
+	endi
+endm
+
+
+
+*Hit Script
+scrp 2 15 64738 3
+	lock
+
+*stim the creature so they played with a toy
+*but also give them the chemicals of hitting a critter
+	stim writ from 87 1
+	stim writ from 97 0.5
+
+*make a smack sound
+	snde "spnk"
+
+*	wait 7
+
+	inst
+
+*AAAAA DONT HIT ME!!!!
+	snde "doz3"
+	setv vely -17
+
+*if you were hit by a creature, store their direction
+	doif crea from = 1
+		targ from
+
+*		dirn 2 - right
+*		dirn 3 - left
+		setv va01 dirn
+
+	else
+		setv va01 -1
+	endi
+
+	targ ownr
+
+*norn was facing right
+	doif va01 = 2
+
+*apply random positive X velocity
+		setv velx rand 14 17
+
+*norn was facing left
+	elif va01 = 3
+
+*apply random negative X velocity
+		setv velx rand -14 -17
+
+	else
+
+*apply random X velocity
+		loop
+			setv va00 rand -5 5
+		untl va00 <> 0
+
+		setv velx va00
+
+	endi
+
+
+endm
+
+
+
+
+
+
+
+*Timer Script
+
+scrp 2 15 64738 9
+* Maintain a population of at least 5 doozers
+	inst
+	setv va00 0
+	enum 2 15 64738
+		addv va00 1
+	next
+	doif va00 lt 5
+		setv va00 rand 1 100
+		doif va00 eq 1
+			setv va01 96
+		elif va00 le 11
+			setv va01 64
+		elif va00 le 31
+			setv va01 32
+		else
+			setv va01 0
+		endi
+		new: simp 2 15 64738 "ecoport_doozer" 128 va01 rand 4500 5500
+		setv ov69 0
+		setv ov70 0
+		tick 1
+		setv va00 rand 0 5
+		doif va00 eq 0
+			mvsf rand 8593 8693 476
+		elif va00 eq 1 or va00 eq 2
+			mvsf rand 2040 2343 714
+		elif va00 eq 3
+			mvsf rand 5380 5480 944
+		elif va00 eq 4
+			mvsf rand 1836 1936 2300
+		else
+			mvsf rand 4817 4917 2367
+		endi
+	endi
+	slow
+
+*if the tick rate wasn't what we expected when the timer went off, fix it
+*because we are putting a slight variety on each doozer's initial tick so they're not all in sync
+	doif tick <> ov00
+		tick ov00
+	endi
+
+
+*we are UNDERWATER!!
+	doif rtyp room targ eq 8 or rtyp room targ eq 9
+		addv ov69 1
+		setv ov70 0
+*temporarily set PERM to 50 so doozer can jump out of water easier by going through the bottom of platforms
+		perm 50
+		snde "doz3"
+		doif ov69 lt 3
+			setv vely -45
+		else
+			setv vely -65
+		endi
+
+*apply random X velocity
+		loop
+		doif ov69 lt 3
+			setv va00 rand -1 1
+		else
+			setv va00 rand -5 5
+		endi
+		untl va00 <> 0
+		mulv va00 20
+		setv velx va00
+
+*set direction of travel to match new random velocity
+		doif va00 < 0
+			setv ov02 0
+		elif va00 > 0
+			setv ov02 1
+		endi
+
+	else
+		doif ov70 lt 5
+			addv ov70 1
+		else
+			setv ov69 0
+		endi
+
+*25% chance to make a sound every time it takes a step while not underwater
+		setv va00 rand 0 3
+		doif va00 = 1
+			sndc "dooz"
+		endi
+	endi
+	inst
+
+
+*flip direction if you touched a wall recently
+	doif wall eq left
+
+		setv ov02 1
+
+	endi
+
+
+
+	doif wall eq rght
+
+		setv ov02 0
+
+	endi
+
+
+
+
+*UNSTUCK CODE:
+
+*if he bumps into the far right slightly diagonal wall of the volcano he gets stuck - so we detect if X position hasn't changed by more than 5
+*every timer tick and if it doesn't change for N ticks in a row, change direction because you got stuck.
+
+
+*ov03 - what position was this doozer at last frame?
+*va10 - what position is this doozer at this frame? +5
+*va11 - what position is this doozer at this frame? -5
+
+
+	setv va10 posx
+	setv va11 va10
+
+	addv va10 5
+	subv va11 5
+
+*for example:
+*ov03 = 0
+*va10 = 5
+*va11 = -5
+*0 < 5 and 0 > -5 is true
+
+	doif ov03 < va10 and ov03 > va11 and movs = 0
+*add 1 to how long we've been stuck counter
+		addv ov04 1
+	else
+*we moved! reset stuck counter
+		setv ov04 0
+	endi
+
+	setv ov03 posx
+
+
+*if you haven't moved much the last N ticks
+	doif ov04 > 1
+
+		doif ov02 = 0
+			setv ov02 1
+		else
+			setv ov02 0
+		endi
+
+*reset ov04 for next time we have trouble with a wall
+		setv ov04 0
+
+	endi
+
+
+
+
+
+
+
+
+*MOVE:
+
+
+*LEFT
+	doif ov02 eq 0
+
+		anim [0 1 2 3 4 5 6 7 8 9 10]
+
+*if they're falling, no velocity
+		doif fall = 0
+			subv vely ov07
+
+			subv velx ov06
+
+			wait ov01
+
+			subv vely ov07
+
+			subv velx ov06
+
+			wait ov01
+
+			subv vely ov07
+
+			subv velx ov06
+		endi
+
+*RIGHT
+	elif ov02 eq 1
+
+		anim [11 12 13 14 15 16 17 18 19 20 21]
+
+*if they're falling, no velocity
+		doif fall = 0
+			subv vely ov07
+
+			addv velx ov06
+
+			wait ov01
+
+			subv vely ov07
+
+			addv velx ov06
+
+			wait ov01
+
+			subv vely ov07
+
+			addv velx ov06
+		endi
+	endi
+
+endm
+
+
+
+
+*hell no we won't go
+
+rscr
+
+enum 2 15 64738
+
+	kill targ
+
+next
+
+scrx 2 15 64738 10
+scrx 2 15 64738 6
+scrx 2 15 64738 1
+scrx 2 15 64738 9

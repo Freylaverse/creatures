@@ -1,0 +1,164 @@
+* 2 16 64732 - It's Borland! Yay!
+
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you're not getting more than one Borland!
+	setv va00 0
+	enum 2 16 64732
+		addv va00 1
+	next
+	doif va00 eq 0
+		inst
+		new: simp 2 16 64732 "ecoport_borland" 680 0 100
+		attr 212
+		mvsf 3819 2025
+		accg 0
+		aero 0
+		tick 10
+		setv ov00 rand 0 1
+* Are-we-stuck variables
+		setv ov50 0
+		setv ov51 0
+		setv ov52 0
+	else
+* But I will reset his position for you in case he got stuck
+		enum 2 16 64732
+			mvsf 3819 2025
+		next
+	endi
+endi
+
+scrp 2 16 64732 6
+	lock
+	setv va00 velx
+	negv va00
+	setv va01 vely
+	negv va01
+	doif wall eq 0 or wall eq 1
+		velo va00 vely
+	else
+		velo velx va01
+	endi
+	wait 10
+	unlk
+endm
+
+scrp 2 16 64732 9
+* Stuck checker! Sometimes has false positives if he's been slow.
+	doif ov50 eq 0
+		setv ov50 posx
+	elif ov51 eq 0
+		setv ov51 posx
+	elif ov52 eq 0
+		setv ov52 posx
+	else
+		setv va00 0
+		addv va00 ov50
+		subv va00 ov52
+		absv va00
+		doif va00 lt 10
+			mvsf 3819 2025
+		else
+		endi
+		setv ov50 0212
+		
+		setv ov51 0
+		setv ov52 0
+	endi
+
+* Stay away from that thing that always got you stuck when I was testing you!!! >:0
+	doif posx gt 4077 and posy gt 1826 and posy lt 2141
+		velo -2 0
+	endi
+
+* facing left but maybe stuck?
+	doif ov00 eq 0 and obst 0 lt 10
+		setv ov00 1
+* turn from left to right
+		anim [57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113]
+		over
+		velo 1 0
+		wait 10
+* facing right but maybe stuck?
+	elif ov00 eq 1 and obst 1 lt 10
+		setv ov00 0
+* turn from right to left
+		anim [171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227]
+		over
+		velo -1 0
+		wait 10
+	elif obst 2 lt 10
+		velo velx 1
+	elif obst 3 lt 10
+		velo velx -1
+	endi
+
+	doif rand 0 3 eq 0
+		doif rand 0 1 eq 0
+			snde "bor1"
+		else
+			snde "bor2"
+		endi
+	endi
+* if facing left but moving right
+	doif ov00 eq 0 and velx gt 0
+		setv ov00 1
+* turn from left to right
+		anim [57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113]
+		over
+* if facing left and moving left
+	elif ov00 eq 0
+		velo rand -2 -1 rand -1 1
+
+		anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28]
+		over
+* STILL moving left?
+		doif velx lt 0
+			anim [29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56]
+			over
+		endi
+		unlk
+* if facing right but moving left
+	elif ov00 eq 1 and velx lt 0
+		setv ov00 0
+* turn from right to left
+		anim [171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227]
+		over
+* otherwise, you're probably facing right and moving right
+	else
+		setv va50 rand -1 1
+		velo rand 1 2 rand -1 1
+
+		anim [114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142]
+		over
+* STILL moving right?
+		doif velx gt 0
+			anim [143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170]
+			over
+		endi
+		unlk
+	endi
+endm
+
+scrp 2 16 64732 1
+* ctrl + shift + click resets position!
+	doif keyd 16 eq 1 and keyd 17 eq 1
+		mvsf 3819 2025
+	endi
+	doif rand 0 1 eq 0
+		snde "bor1"
+	else
+		snde "bor2"
+	endi
+endm
+
+
+
+rscr
+enum 2 16 64732
+	kill targ
+next
+scrx 2 16 64732 1
+scrx 2 16 64732 6
+scrx 2 16 64732 9

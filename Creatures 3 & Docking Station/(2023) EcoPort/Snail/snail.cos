@@ -1,0 +1,322 @@
+* 2 13 64732 - just snailin' along!
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you 're not getting extra snails this way!
+	setv va00 0
+	enum 2 13 64732
+		addv va00 1
+	next
+	doif va00 eq 0
+		setv va05 0
+		reps 10
+			new: simp 2 13 64732 "ecoport_snail" 37 0 500
+			attr 195
+			bhvr 57
+			accg .5
+			elas 0
+			fric 50
+			perm 60
+			rnge 600
+			emit 6 0.5
+* Age
+			setv ov42 rand 200 350
+* Direction
+			setv ov43 rand 0 1
+* Are-we-stuck variables
+			setv ov50 0
+			setv ov51 0
+			setv ov52 0
+* Hunger and Loneliness
+			setv ov68 0
+			setv ov69 0
+* Wall override
+			setv ov98 0
+			setv ov99 0
+			tick rand 10 20
+			addv va05 1
+			doif va05 eq 1
+				setv va01 2117
+				setv va02 2505
+			elif va05 eq 2
+				setv va01 2073
+				setv va02 2490
+			elif rand 0 1 eq 0
+				setv va01 rand 1997 2532
+				setv va02 681
+			else
+				setv va01 rand 1600 2170
+				setv va02 1989
+			endi
+			mvsf va01 va02
+		repe
+	endi
+endi
+* Snail timer script
+
+scrp 2 13 64732 9
+* Stop if carried
+	doif carr ne null or fall eq 1
+		wait 20
+		stop
+	endi
+* Die if underwater
+	doif rtyp room targ eq 8 or rtyp room targ eq 9
+
+		wait 20
+		doif rtyp room targ eq 8 or rtyp room targ eq 9
+
+			kill ownr
+		endi
+	endi
+	addv ov42 1
+
+* Hatch?
+	doif ov42 gt 10 and ov42 lt 15
+		setv ov42 17
+		doif ov43 eq 1
+			base 28
+			pose 0
+		else
+			base 19
+			pose 0
+
+		endi
+	endi
+
+* You only care about snail things if you're a snail, not an egg!
+	doif ov42 gt 16
+
+* If there's no food, become hungry
+		setv va00 0
+		esee 2 4 0
+			addv va00 1
+		next
+		esee 2 5 0
+			addv va00 1
+		next
+		esee 2 6 0
+			addv va00 1
+		next
+		esee 2 7 0
+			addv va00 1
+		next
+		esee 2 8 0
+			addv va00 1
+		next
+		esee 2 9 0
+			addv va00 1
+		next
+		esee 2 10 0
+			addv va00 1
+		next
+		doif va00 lt 2
+			addv ov68 1
+		elif va00 lt 5
+		else
+			setv ov68 0
+		endi
+
+* Random direction change
+		doif rand 0 20 eq 0
+			doif ov43 eq 0
+				setv ov43 1
+			else
+				setv ov43 0
+			endi
+		endi
+
+* 1st anti-stuck measure: wall checker! 
+		doif wall eq left and ov99 eq 0
+			setv ov43 1
+		elif wall eq rght and ov99 eq 0
+			setv ov43 0
+		endi
+
+* 2nd anti-stuck measure: are we really stuck-er?
+		doif ov50 eq 0
+			setv ov50 posx
+		elif ov51 eq 0
+			setv ov51 posx
+		elif ov52 eq 0
+			setv ov52 posx
+		else
+			setv va00 0
+			addv va00 ov50
+			subv va00 ov52
+			absv va00
+			doif va00 lt 2 and ov43 eq 0
+				setv ov43 1
+				setv ov98 0
+			elif va00 lt 2 and ov43 eq 1
+				setv ov43 0
+				setv ov98 0
+			else
+				addv ov98 1
+			endi
+			setv ov99 1
+			setv ov50 0
+			setv ov51 0
+			setv ov52 0
+		endi
+
+* Have we been travelling fine for a while?
+		doif ov98 gt 5
+			setv ov99 0
+		endi
+
+* Anti-norn pond!
+		doif posy gt 746 and posy lt 939 and posx gt 3026 and posx lt 3228
+			setv ov43 0
+			setv ov98 0
+			setv ov99 1
+		endi
+
+		doif ov43 eq 0 and ov42 gt 200
+			base 1
+			pose 0
+
+		elif ov43 eq 0
+			base 19
+			pose 0
+
+		elif ov43 eq 1 and ov42 gt 200
+			base 10
+			pose 0
+
+		else
+			base 28
+			pose 0
+
+		endi
+
+* Now actually move.
+		doif ov43 eq 0
+			velo -1 -1
+		elif ov43 eq 1
+			velo 1 -1
+		endi
+		anim [0 1 2 3 4 5 6 7 8]
+
+		over
+
+* Become lonely?
+		setv va00 0
+		esee 2 13 64732
+			addv va00 1
+		next
+		doif va00 lt 3 and ov42 gt 200
+			addv ov69 1
+		else
+			setv ov69 0
+		endi
+		doif ov69 gt 25
+			inst
+			setv ov69 0
+			setv va02 posl
+			addv va02 20
+			setv va03 post
+			addv va03 10
+			setv va04 rand -2 2
+			inst
+			new: simp 2 13 64732 "ecoport_snail" 37 0 500
+			attr 195
+			bhvr 57
+
+			accg .5
+			elas 0
+			fric 50
+			perm 60
+			rnge 600
+			emit 6 0.5
+* Age
+			setv ov42 0
+* Direction
+			setv ov43 rand 0 1
+* Are-we-stuck variables
+			setv ov50 0
+			setv ov51 0
+			setv ov52 0
+* Hunger and loneliness
+setv ov68 0
+			setv ov69 0
+* Wall override
+			setv ov98 0
+			setv ov99 0
+			tick rand 10 20
+			mvsf va02 va03
+			velo va04 -1
+		endi
+
+* Starve
+		doif ov68 gt 100
+			kill ownr
+		endi
+
+* Die of old age
+		doif ov42 gt 500
+			setv va00 0
+			esee 2 13 64732
+				addv va00 1
+			next
+* Refuse to be the last of your kind!!!
+			doif va00 lt 3
+				new: simp 2 13 64732 "ecoport_snail" 37 0 500
+				bhvr 57
+
+				attr 195
+				accg .5
+				elas 0
+				fric 50
+				perm 60
+				rnge 600
+				emit 6 0.5
+* Age
+				setv ov42 0
+* Direction
+				setv ov43 rand 0 1
+* Are-we-stuck variables
+				setv ov50 0
+				setv ov51 0
+				setv ov52 0
+* Hunger and Loneliness
+				setv ov68 0
+				setv ov69 0
+* Wall override
+				setv ov98 0
+				setv ov99 0
+				tick rand 10 20
+				mvsf va02 va03
+				velo va04 -1
+			endi
+			kill ownr
+		endi
+
+	endi
+
+endm
+
+scrp 2 13 64732 1
+	velo rand -2 2 -2
+	stim writ from 85 1
+endm
+
+scrp 2 13 64732 3
+	velo rand -2 2 -2
+	stim writ from 85 1
+endm
+
+scrp 2 13 64732 12
+	snde "chwp"
+	stim writ from 80 1
+	kill ownr
+endm
+
+rscr
+enum 2 13 64732
+	kill targ
+next
+scrx 2 13 64732 1
+scrx 2 13 64732 3
+scrx 2 13 64732 9
+scrx 2 13 64732 12

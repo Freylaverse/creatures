@@ -1,0 +1,102 @@
+* 1 1 64743 - Tantris Mother
+* 2 8 64743 - Tantris Berry
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you 're not getting extra fruit this way!
+	doif totl 1 1 64743 eq 0
+		new: simp 1 1 64743 "blnk" 1 0 0
+		tick 500
+		mvto 770 1476
+
+		inst
+		reps 10
+			new: simp 2 8 64743 "ecoport_tantris" 12 0 0
+			attr 208
+			accg 0
+			bhvr 48
+			fric 100
+			perm rand 40 60
+			elas 30
+			setv ov42 0
+			tick rand 100 500
+			mvsf rand 740 1091 rand 1381 1555
+		repe
+	endi
+endi
+
+scrp 1 1 64743 9
+	doif totl 2 8 64743 lt 10
+		new: simp 2 8 64743 "ecoport_tantris" 12 0 0
+		attr 208
+		accg 0
+		bhvr 48
+		fric 100
+		perm rand 40 60
+		elas 30
+		setv ov42 0
+		tick rand 100 500
+
+		mvsf rand 740 1091 rand 1381 1555
+	endi
+endm
+
+scrp 2 8 64743 9
+	doif carr ne null
+		stop
+	endi
+	addv ov42 1
+	doif ov42 eq 1
+		pose 1
+	elif ov42 eq 2
+		pose 2
+	elif ov42 eq 3
+		pose 3
+	elif ov42 eq 4
+		pose 4
+	elif ov42 eq 5
+		pose 5
+	elif ov42 eq 6
+		pose 6
+	elif ov42 eq 7
+		pose 7
+	elif ov42 eq 8
+		pose 8
+	elif ov42 eq 9
+		pose 9
+	elif ov42 eq 10
+		pose 10
+		accg 5
+		velo 0 1
+		attr 195
+		emit 6 1
+	elif ov42 gt 50
+		kill ownr
+	endi
+endm
+
+scrp 2 8 64743 12
+	snde "chwp"
+	stim writ from 78 1
+	targ from
+	chem 161 0.2
+	chem 98 0.5
+	chem 99 0.5
+	targ ownr
+	doif pose eq 10
+		pose 11
+	else
+		kill ownr
+	endi
+endm
+
+rscr
+enum 1 1 64743
+	kill targ
+next
+enum 2 8 64743
+	kill targ
+next
+scrx 2 8 64743 9
+scrx 2 8 64743 12
+scrx 1 1 64743 9

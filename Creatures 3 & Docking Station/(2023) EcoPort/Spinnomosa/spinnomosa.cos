@@ -1,0 +1,400 @@
+* 2 5 64743 - You spin me right 'round, baby...
+* 2 3 64743 - Spinnomosa Seeds
+* 2 23 64743 - Spinnomosa Vendor
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you 're not getting extra cacti this way!
+	doif totl 2 5 64743 eq 0 and totl 2 3 64743 eq 0
+		inst
+		reps 5
+			new: simp 2 3 64743 "ecoport_spinnomosa" 44 0 100
+			attr 195
+			bhvr 48
+			fric 5
+			mvsf rand 4900 5900 409
+			perm 100
+			velo rand -2 2 rand -10 -20
+			setv va00 rand 0 3
+			doif va00 eq 0
+				anim [0 1 2 3 4 5 6 7 8 9 255]
+			elif va00 eq 1
+				anim [5 6 7 8 9 0 1 2 3 4 255]
+			elif va00 eq 2
+				anim [2 3 4 5 6 7 8 9 0 1 255]
+			elif va00 eq 3
+				anim [7 8 9 0 1 2 3 4 5 6 255]
+			endi
+			elas 0
+			accg 1
+			emit 7 1
+			setv ov42 rand 0 50
+* ov43-44 Has released seeds? Stage 1 and 2
+			setv ov43 0
+			setv ov44 0
+			setv ov69 1
+			tick rand 30 50
+		repe
+	endi
+endi
+
+* But I will move the vendor for you in case you lost it.
+doif totl 2 23 64743 eq 0
+	new: simp 2 23 64743 "ecoport_spinnomosa" 44 34 100
+	attr 215
+	bhvr 1
+	perm 60
+	accg 5
+	elas 10
+	fric 90
+	doif eame "engine_no_auxiliary_bootstrap_1" = 0
+		mvsf 4779 750
+	else
+		setv va00 game "CreatorX"
+		setv va01 game "CreatorY"
+		doif va00 eq 0 and va01 eq 0
+			setv va00 6110
+			setv va01 9200
+		endi
+		doif tmvt va00 va01 eq 1
+			mvsf va00 va01
+		else
+			mvsf va00 va01
+		endi
+	endi
+else
+	enum 2 23 64743
+		doif eame "engine_no_auxiliary_bootstrap_1" = 0
+			mvsf 4779 770
+
+		else
+			setv va00 game "CreatorX"
+			setv va01 game "CreatorY"
+			doif va00 eq 0 and va01 eq 0
+				setv va00 6110
+				setv va01 9200
+			endi
+			doif tmvt va00 va01 eq 1
+				mvsf va00 va01
+			else
+				mvsf va00 va01
+			endi
+		endi
+	next
+endi
+
+* Vendor activate script
+scrp 2 23 64743 1
+	anim [0 1 2 3 4 5 6 7 8 9 8 7 6 5 4 3 2 1 0]
+	stim writ from 90 1
+	wait 10
+	snde "pop3"
+	setv va02 posl
+	addv va02 8
+	setv va03 post
+	addv va03 10
+	inst
+	new: simp 2 3 64743 "ecoport_spinnomosa" 44 0 100
+	attr 195
+	bhvr 48
+	fric 5
+	perm 100
+	setv va00 rand 0 3
+	doif va00 eq 0
+		anim [0 1 2 3 4 5 6 7 8 9 255]
+	elif va00 eq 1
+		anim [5 6 7 8 9 0 1 2 3 4 255]
+	elif va00 eq 2
+		anim [2 3 4 5 6 7 8 9 0 1 255]
+	elif va00 eq 3
+		anim [7 8 9 0 1 2 3 4 5 6 255]
+	endi
+
+	elas 0
+	accg 1
+	emit 7 1
+	setv ov42 rand 0 50
+	setv ov69 0
+	mvsf va02 va03
+	velo rand -2 2 rand -10 -20
+endm
+
+* Seed pickup script
+scrp 2 3 64743 4
+	pose rand 0 9
+endm
+
+* Seed landing script
+scrp 2 3 64743 6
+	pose rand 0 9
+endm
+
+* Seed dropped script
+scrp 2 3 64743 5
+	anim [0 1 2 3 4 5 6 7 8 9 255]
+endm
+
+* Seed timer script
+scrp 2 3 64743 9
+	doif carr ne null
+		stop
+	endi
+	setv va00 0
+	enum 2 3 64743
+		addv va00 1
+	next
+	enum 2 5 64743
+		addv va00 1
+	next
+	doif va00 gt 100
+		kill ownr
+	endi
+	rnge 500
+	setv va00 0
+	esee 2 3 64743
+		addv va00 1
+	next
+	esee 2 5 64743
+		addv va00 1
+	next
+	doif va00 gt 10
+		kill ownr
+	endi
+	rnge 200
+	setv va00 0
+	esee 2 5 64743
+		addv va00 1
+	next
+	doif va00 gt 1
+		stop
+	endi
+	addv ov42 1
+	doif ov42 ge 50 and fall eq 0
+		doif prop room targ 4 lt 0.2
+			kill ownr
+		else
+			doif rtyp room targ eq 8 or rtyp room targ eq 9
+				kill ownr
+			endi
+			setv va00 posl
+			addv va00 -40
+			setv va01 post
+			addv va01 -75
+			setv va90 perm
+			setv va69 ov69
+			inst
+			new: simp 2 5 64743 "ecoport_spinnomosa" 44 10 rand 100 200
+			perm va90
+			elas 0
+			attr 192
+			bhvr 0
+			setv ov69 va69
+* ov43-44 Has released seeds? ov43 = stage 1, ov44 = stage 2. If 0, not released and not ready. If -1, ready. If 1, released.
+			setv ov43 0
+			setv ov44 0
+			doif ov69 eq 1
+				tick rand 30 75
+				anim [0 1 2 3 4 5 6 7]
+
+			else
+				anim [0 1 2 3 4 5 6 7]
+
+				tick rand 100 200
+			endi
+			setv ov42 7
+			attr 196
+			bhvr 1
+			mvsf va00 va01
+			kill ownr
+		endi
+	endi
+endm
+
+* Push cactus script
+scrp 2 5 64743 1
+	doif pose eq 7
+		lock
+		anim [7 8 9 10 11]
+		over
+		stim writ from 88 0.2
+		snde "stng"
+		anim [10 9 8 7]
+		over
+		mesg writ from 64
+		targ ownr
+		unlk
+	elif ov43 eq -1
+		stim writ from 88 0.2
+		gsub seed
+		setv va42 rand 41 60
+		pose 14
+	elif ov44 eq -1
+		stim writ from 88 0.2
+		gsub seed
+		attr 192
+		bhvr 0
+		pose 15
+	else
+	endi
+
+* SEED SUBROUTINE
+	subr seed
+		doif ov43 eq -1
+			setv ov43 1
+			setv ov44 -1
+			setv va30 3
+		elif ov44 eq -1
+
+			setv ov44 1
+			attr 192
+			bhvr 0
+			setv va30 6
+		else
+			setv va30 0
+
+		endi
+		doif va30 ne 0
+			inst
+			reps va30
+				setv va11 posx
+				addv va11 -25
+				setv va12 post
+				new: simp 2 3 64743 "ecoport_spinnomosa" 44 0 100
+				attr 195
+				bhvr 48
+				fric 5
+				perm 100
+				setv va00 rand 0 3
+				doif va00 eq 0
+					anim [0 1 2 3 4 5 6 7 8 9 255]
+				elif va00 eq 1
+					anim [5 6 7 8 9 0 1 2 3 4 255]
+				elif va00 eq 2
+					anim [2 3 4 5 6 7 8 9 0 1 255]
+				elif va00 eq 3
+					anim [7 8 9 0 1 2 3 4 5 6 255]
+				endi
+				velo rand -10 10 rand -10 -20
+				elas 0
+				accg 1
+				emit 7 1
+				setv ov42 rand -50 0
+				setv ov69 0
+				tick rand 30 50
+				mvsf va11 va12
+			repe
+			targ ownr
+			snde "pop3"
+		endi
+	retn
+endm
+
+* Cactus timer script
+scrp 2 5 64743 9
+	addv ov42 1
+	doif ov42 le 6
+	elif ov42 gt 6 and ov42 le 30
+		pose 7
+	elif ov42 lt 40 and ov43 eq 0
+		pose 13
+		setv ov43 -1
+	elif ov42 gt 60 and ov42 lt 80
+		doif ov43 eq -1
+			gsub seed
+			setv va42 rand 41 60
+			pose 14
+		elif ov44 eq -1
+			gsub seed
+			attr 192
+			bhvr 0
+			pose 15
+		endi
+	elif ov42 gt 80
+		gsub dead
+	endi
+
+* SEED SUBROUTINE
+	subr seed
+		doif ov43 eq -1
+			setv ov43 1
+			setv ov44 -1
+			setv va30 3
+		elif ov44 eq -1
+
+			setv ov44 1
+			attr 192
+			bhvr 0
+			setv va30 6
+		else
+			setv va30 0
+		endi
+		doif va30 ne 0
+			inst
+			reps va30
+				setv va11 posx
+				addv va11 -25
+				setv va12 post
+				new: simp 2 3 64743 "ecoport_spinnomosa" 44 0 100
+				attr 195
+				bhvr 48
+				fric 5
+				perm 100
+				setv va00 rand 0 3
+				doif va00 eq 0
+					anim [0 1 2 3 4 5 6 7 8 9 255]
+				elif va00 eq 1
+					anim [5 6 7 8 9 0 1 2 3 4 255]
+				elif va00 eq 2
+					anim [2 3 4 5 6 7 8 9 0 1 255]
+				elif va00 eq 3
+					anim [7 8 9 0 1 2 3 4 5 6 255]
+				endi
+				velo rand -10 10 rand -10 -20
+				elas 0
+				accg 1
+				emit 7 1
+				setv ov42 rand -50 0
+				setv ov69 0
+				tick rand 30 50
+				mvsf va11 va12
+			repe
+			targ ownr
+			snde "pop3"
+		endi
+	retn
+
+*DEATH SUBROUTINE
+	subr dead
+		lock
+		anim [15 15 16 16 17 17 18 18 19 19 20 20 20 21 21 22 22 23 23]
+		over
+		unlk
+		kill ownr
+	retn
+endm
+
+scrp 2 3 64743 12
+	snde "chwp"
+
+	stim writ from 77 1
+	kill ownr
+endm
+
+rscr
+enum 2 5 64743
+	kill targ
+next
+enum 2 3 64743
+	kill targ
+next
+enum 2 23 64743
+	kill targ
+next
+scrx 2 5 64743 9
+scrx 2 5 64743 1
+scrx 2 3 64743 1
+scrx 2 3 64743 4
+scrx 2 3 64743 5
+scrx 2 3 64743 6
+scrx 2 3 64742 12
+scrx 2 23 64743 1

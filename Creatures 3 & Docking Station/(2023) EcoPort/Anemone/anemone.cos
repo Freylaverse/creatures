@@ -1,0 +1,188 @@
+* 2 15 64739 - with fronds like these...
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you're not getting more than four anemones!
+	setv va00 0
+	enum 2 15 64739
+		addv va00 1
+	next
+	doif va00 eq 0
+		setv va01 0
+		reps 4
+			inst
+			doif rand 0 1 eq 0
+				setv va00 42
+			else
+				setv va00 0
+			endi
+			new: simp 2 15 64739 "ecoport_anemone" 84 va00 10
+			attr 199
+			bhvr 31
+			addv va01 1
+			doif va01 eq 1
+				mvsf rand 3814 3991 2344
+			else
+				mvsf rand 5325 5604 2253
+			endi
+			accg 2
+			tick 20
+			elas 0
+* ov00 - is hiding?
+* ov01 - time spent hiding
+			setv ov00 0
+			setv ov01 0
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 255]
+			emit 6 0.5
+		repe
+	elif va00 lt 4
+		inst
+		doif rand 0 1 eq 0
+			setv va00 42
+		else
+			setv va00 0
+		endi
+		new: simp 2 15 64739 "ecoport_anemone" 84 va00 10
+		attr 199
+		bhvr 31
+		mvsf rand 5325 5604 2253
+
+		accg 2
+		tick 20
+		elas 0
+* ov00 - is hiding?
+* ov01 - time spent hiding
+		setv ov00 0
+		setv ov01 0
+		anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 255]
+		emit 6 0.5
+
+	endi
+endi
+
+scrp 2 15 64739 0
+	doif ov00 eq 0
+		setv ov01 0
+		lock
+		anim [25 26 27 28 29 30 31 32 33 34 35]
+		over
+		setv ov00 1
+		attr 215
+		emit 6 0
+		unlk
+		anim [35 36 37 38 39 40 41 41 41 41 255]
+	else
+		setv ov01 0
+	endi
+endm
+
+scrp 2 15 64739 1
+	doif ov00 eq 0
+		setv ov01 0
+		lock
+		anim [25 26 27 28 29 30 31 32 33 34 35]
+		over
+		setv ov00 1
+		attr 215
+		emit 6 0
+		unlk
+		anim [35 36 37 38 39 40 41 41 41 41 255]
+	else
+		setv ov01 0
+	endi
+endm
+
+scrp 2 15 64739 2
+	doif ov00 eq 0
+		setv ov01 0
+		lock
+		anim [25 26 27 28 29 30 31 32 33 34 35]
+		over
+		setv ov00 1
+		attr 215
+		emit 6 0
+
+		unlk
+		anim [35 36 37 38 39 40 41 41 41 41 255]
+	else
+		setv ov01 0
+	endi
+endm
+
+scrp 2 15 64739 3
+	velo 0 -1
+	doif ov00 eq 0
+		setv ov01 0
+		lock
+		anim [25 26 27 28 29 30 31 32 33 34 35]
+		over
+		setv ov00 1
+		attr 215
+		emit 6 0
+
+		unlk
+		anim [35 36 37 38 39 40 41 41 41 41 255]
+	else
+		setv ov01 0
+	endi
+endm
+
+scrp 2 15 64739 9
+	doif rtyp room targ ne 8 and rtyp room targ ne 9
+		doif ov00 eq 0
+			setv ov01 0
+			lock
+			anim [25 26 27 28 29 30 31 32 33 34 35]
+			over
+			setv ov00 1
+			attr 215
+			emit 6 0
+
+			unlk
+			anim [35 36 37 38 39 40 41 41 41 41 255]
+		else
+			setv ov01 0
+		endi
+	elif ov00 eq 1
+		addv ov01 1
+		doif ov01 gt 10
+			anim [35 34 33 32 31 30 29 28 27 26 25]
+			over
+			setv ov01 0
+			setv ov00 0
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 255]
+			attr 199
+			emit 6 0.5
+		endi
+	endi
+endm
+
+scrp 2 15 64739 12
+	snde "chwp"
+	stim writ from 80 4
+	doif ov00 eq 0
+		setv ov01 0
+		lock
+		anim [25 26 27 28 29 30 31 32 33 34 35]
+		over
+		setv ov00 1
+		attr 215
+		emit 6 0
+
+		unlk
+		anim [35 36 37 38 39 40 41 41 41 41 255]
+	else
+		setv ov01 0
+	endi
+endm
+
+rscr
+enum 2 15 64739
+	kill targ
+next
+scrx 2 15 64739 0
+scrx 2 15 64739 1
+scrx 2 15 64739 2
+scrx 2 15 64739 3
+scrx 2 15 64739 9
+scrx 2 15 64739 12

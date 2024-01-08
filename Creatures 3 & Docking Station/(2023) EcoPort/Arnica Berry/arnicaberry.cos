@@ -1,0 +1,91 @@
+
+* 1 1 64744 - Arnica Mother
+* 2 8 64744 - Arnica Berry
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you 're not getting extra fruit this way!
+	doif totl 1 1 64744 eq 0
+		new: simp 1 1 64744 "blnk" 1 0 0
+		tick 500
+		mvto 2227 1808 
+		inst
+		reps 7
+			setv va00 rand 0 2
+			new: simp 2 8 64744 "ecoport_arnica" 3 va00 0
+			attr 195
+			accg 0
+			bhvr 48
+			fric 100
+			perm rand 40 60
+			elas 30
+			setv ov42 0
+			tick rand 100 500
+			setv va00 rand 0 2
+			doif va00 lt 2
+				mvsf rand 2227 2254 rand 1808 1924
+			else
+				mvsf rand 2275 2304 rand 1804 1859
+			endi
+		repe
+	endi
+endi
+
+scrp 1 1 64744 9
+	doif totl 2 8 64744 lt 7
+		setv va00 rand 0 2
+
+		new: simp 2 8 64744 "ecoport_arnica" 3 va00 0
+		attr 208
+		accg 0
+		bhvr 48
+		fric 100
+		perm rand 40 60
+		elas 30
+		setv ov42 0
+		tick rand 100 500
+		setv va00 rand 0 2
+		doif va00 lt 2
+			mvsf rand 2227 2254 rand 1808 1924
+		else
+			mvsf rand 2275 2304 rand 1804 1859
+		endi
+	endi
+endm
+
+scrp 2 8 64744 4
+	emit 6 1
+	accg 5
+endm
+
+scrp 2 8 64744 9
+	doif carr ne null
+		stop
+	endi
+	addv ov42 1
+	doif ov42 gt 10
+		accg 5
+		emit 6 1
+	elif ov42 gt 50
+		kill ownr
+	endi
+endm
+
+scrp 2 8 64744 12
+	snde "chwp"
+	stim writ from 78 1
+	targ from
+	chem 91 0.5
+	kill ownr
+endm
+
+rscr
+enum 1 1 64744
+	kill targ
+next
+enum 2 8 64744
+	kill targ
+next
+scrx 2 8 64744 9
+scrx 2 8 64744 12
+scrx 1 1 64744 9

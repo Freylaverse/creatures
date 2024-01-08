@@ -1,0 +1,400 @@
+* 2 15 64736 - The snack that smiles back!
+* 2 23 64736 - Vendor
+* 2 18 64736 - Goldfish eggs
+
+*** DO THIS ONLY IF DOCKED ***
+doif eame "engine_no_auxiliary_bootstrap_1" = 0
+* Nice try, but you 're not getting extra fish this way!
+	setv va00 0
+	enum 2 23 64736
+		addv va00 1
+	next
+	enum 2 18 64736
+		addv va00 1
+	next
+	enum 2 15 64736
+		addv va00 1
+	next
+	doif va00 eq 0
+		doif totl 1 1 60615 eq 0
+			inst
+			reps 5
+				new: simp 2 15 64736 "ecoport_goldfish" 36 1 1000
+				attr 195
+				mvsf 6848 516
+				rnge 500
+				elas 0
+				accg 0
+				aero 0
+				setv va20 1
+				setv ov42 rand 0 50
+				setv ov43 0
+
+				tick rand 8 15
+				emit 6 1
+			repe
+		else
+			inst
+			reps 5
+				new: simp 2 15 64736 "ecoport_goldfish" 36 1 1000
+				attr 195
+				mvsf 3888 2128
+				rnge 500
+				elas 0
+				accg 0
+				aero 0
+				setv va20 1
+				setv ov42 rand 0 50
+				setv ov43 0
+
+				tick rand 8 15
+				emit 6 1
+			repe
+		endi
+	endi
+endi
+
+* But I will move the vendor for you in case you lost it.
+setv va00 0
+enum 2 23 64736
+	addv va00 1
+next
+doif va00 eq 0
+	new: simp 2 23 64736 "ecoport_goldfish" 36 31 1000
+	attr 215
+	aero 10
+	perm 60
+	accg 5
+	elas 10
+	fric 90
+	tick 5
+	doif eame "engine_no_auxiliary_bootstrap_1" = 0
+		mvsf 6217 738
+	else
+		setv va00 game "CreatorX"
+		setv va01 game "CreatorY"
+		doif va00 eq 0 and va01 eq 0
+			setv va00 6110
+			setv va01 9200
+		endi
+		doif tmvt va00 va01 eq 1
+			mvsf va00 va01
+		else
+			mvsf va00 va01
+		endi
+	endi
+
+else
+	enum 2 23 64736
+		doif eame "engine_no_auxiliary_bootstrap_1" = 0
+			mvsf 6217 738
+			accg 5
+		else
+			setv va00 game "CreatorX"
+			setv va01 game "CreatorY"
+			doif va00 eq 0 and va01 eq 0
+				setv va00 6110
+				setv va01 9200
+
+			endi
+			doif tmvt va00 va01 eq 1
+				mvsf va00 va01
+
+
+			else
+				mvsf va00 va01
+
+
+			endi
+		endi
+	next
+endi
+
+
+*** Vendor push script ***
+scrp 2 23 64736 1
+	stim writ from 90 1
+	anim [0 1 2 3 4 3 2 1 0]
+	wait 5
+	snde "pop3"
+	setv va02 posl
+	addv va02 30
+	setv va03 post
+	addv va03 10
+	setv va04 rand 16 20
+	inst
+	new: simp 2 18 64736 "ecoport_goldfish" 36 0 1000
+	attr 195
+	elas 10
+	fric 50
+
+	accg 3
+	bhvr 48
+	setv ov42 0
+	tick 15
+	mvsf va02 va03
+	velo rand 0 5 -20
+endm
+
+*** Egg eat script ***
+scrp 2 18 64736 12
+	snde "chwp"
+	stim writ from 80 1
+	kill ownr
+endm
+
+*** Egg collide script **
+scrp 2 18 64736 6
+	snde "text"
+endm
+
+*** Egg hatch script **
+scrp 2 18 64736 9
+* Check for watery conditions!
+	doif rtyp room targ ne 8 and rtyp room targ ne 9
+		wait 10
+		kill ownr
+	else
+* Bounce if you're not old enough
+		doif ov42 < 0
+			wait 1
+			addv ov42 1
+		elif ov42 < 20
+			addv ov42 1
+			velo rand -5 5 -5
+* Hatch if you are! 
+		else
+			inst
+			setv va04 posx
+			setv va05 posy
+			new: simp 2 15 64736 "ecoport_goldfish" 36 1 1000
+			attr 195
+			bhvr 48
+			accg 0
+			rnge 200
+			setv va20 1
+			setv ov42 0
+			setv ov42 0
+			setv ov69 0
+			setv ov50 rand 0 1
+			setv ov51 0
+			tick 20
+			mvsf va04 va05
+			kill ownr
+		endi
+	endi
+endm
+
+
+*** Fishy scripts ***
+scrp 2 15 64736 6
+
+endm
+
+scrp 2 15 64736 9
+* Real quick, make sure you're not supposed to be dead
+	addv ov42 1
+	doif ov42 gt 500
+		lock
+		setv va69 0
+		esee 2 15 64736
+			addv va69 1
+		next
+		esee 2 18 64736
+			addv va69 1
+		next
+		doif va69 lt 5
+			reps 2
+				setv va04 posx
+				setv va05 posy
+				new: simp 2 18 64736 "ecoport_goldfish" 36 0 1000
+				attr 195
+				elas 10
+				fric 50
+				accg 3
+				bhvr 48
+				setv ov42 rand -100 -50
+				tick 15
+				mvsf va04 va05
+			repe
+		elif va69 gt 10
+		else
+			setv va04 posx
+			setv va05 posy
+			new: simp 2 18 64736 "ecoport_goldfish" 36 0 1000
+			attr 195
+			elas 10
+			fric 50
+			accg 3
+			bhvr 48
+			setv ov42 rand -100 -50
+			tick 15
+			mvsf va04 va05
+
+		endi
+		anim [0]
+		accg 1
+		wait 10
+		kill ownr
+		unlk
+	endi
+
+* Are you in air? 
+	doif rtyp room targ ne 8 and rtyp room targ ne 9
+* Fall! 
+		lock
+		accg 1
+		aero 10
+		setv vely 3
+		wait 5
+		unlk
+* Still in air? 
+		doif rtyp room targ ne 8 and rtyp room targ ne 9
+* OH MY GOD YOU CAN'T BREATHE PANIC ANIMATION 
+			addv ov99 1
+			anim [1 2 3 4 5 6 7 8 9 10 11 12 13 255]
+			accg 4
+			aero 10
+* FREE ME 
+			velo rand -5 5 rand -10 -5
+* YOU DIED 
+			doif ov99 ge 20
+				anim []
+				wait 30
+				kill ownr
+			endi
+			stop
+		endi
+	else
+		velo 0 0
+		setv ov99 0
+		accg 0
+		aero 0
+	endi
+* End of air part
+* Move time!
+
+	setv va00 velx
+	setv va01 vely
+* stuck on the bottom?
+	doif obst down lt 5 and obst left gt 5 and obst rght gt 5
+		lock
+		velo 0 -1
+		wait 15
+		unlk
+* lower left
+	elif obst left lt 5 and obst down lt 5
+		lock
+		velo 1 -1
+		wait 15
+		unlk
+
+* upper left
+	elif obst left lt 5 and obst _up_ lt 5
+		lock
+		velo 1 1
+		wait 15
+		unlk
+
+* lower right
+	elif obst rght lt 5 and obst down lt 5
+		lock
+		velo -1 -1
+		wait 15
+		unlk
+
+* upper right
+	elif obst rght lt 5 and obst _up_ lt 5
+		lock
+		velo -1 1
+		wait 15
+		unlk
+
+	else
+		setv va42 rand -3 3
+
+		doif obst 0 gt obst 1
+			doif obst 1 lt 100
+				velo rand -3 -1 rand -1 1
+				wait 1
+				base 16
+			else
+				velo va42 rand -1 1
+				doif va42 gt 0
+					base 1
+				elif va42 lt 0
+					base 16
+				else
+				endi
+			endi
+		else
+			doif obst 0 lt 100
+				velo rand 1 3 rand -1 1
+				wait 1
+				base 1
+			else
+				velo va42 rand -1 1
+				doif va42 gt 0
+					base 1
+				elif va42 lt 0
+					base 16
+				else
+				endi
+			endi
+
+		endi
+	endi
+	anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13]
+
+* End move bit
+* Breed?
+	doif rand 0 200 eq 50
+		setv va69 0
+		esee 2 15 64736
+			addv va69 1
+		next
+		esee 2 18 64736
+			addv va69 1
+		next
+		doif va69 lt 5
+			addv ov42 10
+			setv va04 posx
+			setv va05 posy
+			new: simp 2 18 64736 "ecoport_goldfish" 36 0 1000
+			attr 195
+			elas 10
+			fric 50
+			accg 3
+			bhvr 48
+			setv ov42 -100
+			tick 15
+			mvsf va04 va05
+		endi
+	endi
+endm
+
+*** Mmm, seafood... ***
+scrp 2 15 64736 12
+	snde "chwp"
+	stim writ from 80 4
+	kill ownr
+endm
+
+
+
+rscr
+enum 2 15 64736
+	kill targ
+next
+enum 2 23 64736
+	kill targ
+next
+enum 2 18 64736
+	kill targ
+next
+scrx 2 23 64736 1
+scrx 2 15 64736 9
+scrx 2 15 64736 12
+scrx 2 18 64736 12
+scrx 2 18 64736 6
+scrx 2 18 64736 9

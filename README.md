@@ -8,9 +8,7 @@ There are three main directories, corresponding to each of the three main games:
 Mod List (So far!)
 Please note: I am a forgetful little goldfish and WILL NOT remember to update the list in the Readme when I actually add new COBS/agents. 
 
-    Mod Name 1: A brief description of what this mod does.
-    Mod Name 2: A brief description of what this mod does.
-    (More mods will be listed here)
+    Placeholder
 
 License
 

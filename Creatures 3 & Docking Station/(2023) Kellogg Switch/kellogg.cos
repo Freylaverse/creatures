@@ -1,0 +1,47 @@
+new: simp 1 1 64740 "kellogg" 2 0 10000
+attr 38
+tick 0
+setv ov00 0
+setv va00 game "CreatorX"
+setv va01 game "CreatorY"
+doif va00 eq 0 and va01 eq 0
+	setv va00 6110
+	setv va01 9200
+endi
+doif tmvt va00 va01 eq 1
+	mvto va00 va01
+else
+	mvsf va00 va01
+endi
+
+
+scrp 1 1 64740 1
+	doif ov00 eq 0
+		tick 10
+		setv game "kellogg" 1
+		pose 1
+		setv ov00 1
+		snde "kel2"
+	else
+		tick 0
+		setv game "kellogg" 0
+		setv ov00 0
+		pose 0
+		snde "kel1"
+	endi
+endm
+
+scrp 1 1 64740 9
+	enum 4 0 0
+		chem 53 -1
+		chem 46 -1
+		chem 161 -1
+	next
+endm
+
+rscr
+enum 1 1 64740
+	kill targ
+next
+scrx 1 1 64740 9
+scrx 1 1 64740 1

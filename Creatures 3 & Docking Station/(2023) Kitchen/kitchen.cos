@@ -1,0 +1,1583 @@
+* Kitchen
+
+* ---- * 
+*  :D  *
+* ---- *
+
+
+new: vhcl 3 8 64733 "freyla_kitchencounter" 19 0 1000
+setv game "kitchenfoodsspritecount" 67
+dbg: outs "Injected kitchen"
+attr 207
+perm 100
+accg 5
+elas 0
+aero 1
+tick 20
+* Cabin
+cabn 60 0 125 115
+cabp 1001
+cabw 1
+setv ov50 0
+setv ov51 0
+setv ov52 0
+pat: dull 1 "freyla_kitchencounter" 18 69 97 1010
+part 1
+alph 128 1
+pat: butt 2 "freyla_kitchencounter" 1 2 9 84 1001 [] 1001 0
+pat: butt 3 "freyla_kitchencounter" 3 2 9 52 1001 [] 1002 0
+pat: butt 4 "freyla_kitchencounter" 5 2 10 9 1001 [] 1003 0
+setv va00 game "CreatorX"
+setv va01 game "CreatorY"
+doif va00 eq 0 and va01 eq 0
+	setv va00 6110
+	setv va01 9200
+endi
+doif tmvt va00 va01 eq 1
+	mvto va00 va01
+else
+	mvsf va00 va01
+endi
+
+* mv42-mv44 is your wildcard ingredient
+scrp 3 8 64733 1
+	mesg writ ownr 1042
+endm
+
+* We got one!
+scrp 3 8 64733 124
+	dbg: outs "Received passenger of classifier:"
+	epas 0 0 0
+		doif targ <> null
+			snde "text"
+			seta va42 targ
+		else
+		endi
+	next
+	targ ownr
+	seta ov10 va42
+	doif va42 ne null
+		targ va42
+		setv mv42 fmly
+		setv mv43 gnus
+		setv mv44 spcs
+	else
+		setv mv42 0
+		setv mv43 0
+		setv mv44 0
+	endi
+	tick 0
+	dbg: outv mv42
+	dbg: outv mv43
+	dbg: outv mv44
+endm
+
+* We lost one...
+scrp 3 8 34733 125
+	dbg: outs "Lost passenger."
+	epas 0 0 0
+		doif targ <> null
+			snde "text"
+			seta va42 targ
+		else
+		endi
+	next
+	targ ownr
+	seta ov10 va42
+	doif va42 ne null
+		targ va42
+		setv mv42 fmly
+		setv mv43 gnus
+		setv mv44 spcs
+	else
+		setv mv42 0
+		setv mv43 0
+		setv mv44 0
+	endi
+	tick 0
+endm
+
+
+* Timer
+scrp 3 8 64733 9
+	mesg writ ownr 125
+endm
+
+scrp 3 8 64733 1001
+	inst
+	part 2
+	doif pose eq 0
+		anim [1]
+		targ ownr
+		setv ov50 1
+		dbg: outs "Turning ov50 (milk) on"
+	else
+		anim [0]
+		targ ownr
+		setv ov50 0
+		dbg: outs "Turning ov50 (milk) off"
+
+	endi
+endm
+
+scrp 3 8 64733 1002
+	inst
+	part 3
+	doif pose eq 0
+		anim [1]
+		targ ownr
+		setv ov51 1
+		dbg: outs "Turning ov51 (flour) on"
+
+	else
+		anim [0]
+		targ ownr
+		setv ov51 0
+		dbg: outs "Turning ov51 (flour) off"
+
+	endi
+endm
+
+scrp 3 8 64733 1003
+	inst
+	part 4
+	doif pose eq 0
+		anim [1]
+		targ ownr
+		setv ov52 1
+		dbg: outs "Turning ov52 (sugar) on"
+
+	else
+		anim [0]
+		targ ownr
+		setv ov52 0
+		dbg: outs "Turning ov52 (sugar) off"
+
+	endi
+endm
+
+scrp 3 8 64733 1042
+	lock
+* If there's ingredients to add from the shelves, add 'em
+	doif ov50 eq 1 or ov51 eq 1 or ov52 eq 1
+		dbg: outs "Adding shelf ingredients"
+		snde "fvnd"
+		anim [0 11 12 13 14 15 16 17 0]
+		over
+		wait 15
+	else
+	endi
+* Spit out raw ingredients
+	doif ov50 eq 0 and ov51 eq 0 and ov52 eq 0
+		dbg: outs "No shelf ingredients, can't bake!"
+		snde "buzz"
+		dpas 0 0 0
+*** PLAIN RECIPES START ***
+* Make plain milk
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 0 and mv42 eq 0
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64732 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 4 va04
+		perm 100
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make plain cracker
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 0 and mv42 eq 0
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64737 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 3 va04
+		perm 100
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make caramel
+	elif ov50 eq 0 and ov51 eq 0 and ov52 eq 1 and mv42 eq 0
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64733 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 0 va04
+		perm 100
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make pancakes
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 0 and mv42 eq 0
+
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64741 "freyla_stovefoods" 9 4 va04
+		perm 100
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make cookie
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 1 and mv42 eq 0
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64738 "cookie" 14 6 va04
+		perm 100
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make plain milkshake
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 1 and mv42 eq 0
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64735 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 29 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 30 0 0 1
+		part 1
+		tint 200 200 200 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make cake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 0
+		dbg: outs "Conditions met for plain cake"
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 5 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		dbg: outs "Plain cake made"
+
+
+*** PLAIN RECIPES END ***
+*** SPECIFIC RECIPES START ***
+
+* Make carrotcake (ds)
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 11 and mv44 eq 9
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 41 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make carrotcake (c3)
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 11 and mv44 eq 1
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 41 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make peaking cake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 11 and mv44 eq 7
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 37 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make cheesecake (c3)
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 11 and mv44 eq 2
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 21 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make cheesecake (c2)
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 11 and mv44 eq 50202
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 21 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make cheesecake (c1)
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 11 and mv44 eq 32300
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 21 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make lemoncake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 8 and mv44 eq 7
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 25 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make applecake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 8 and mv44 eq 2
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 9 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_kitchenfoods" 17 0 0 va04
+		part 1
+		tint 216 112 66 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make lemon jelly
+	elif ov50 eq 0 and ov51 eq 0 and ov52 eq 1 and mv42 eq 2 and mv43 eq 8 and mv44 eq 7
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64733 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 33 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 34 0 0 1
+		part 1
+		tint 200 200 0 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make lemon smoothie
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 0 and mv42 eq 2 and mv43 eq 8 and mv44 eq 7
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv mv42 0
+		setv mv43 0
+		setv mv44 0
+		setv va04 rand 1100 1200
+		new: comp 2 25 64732 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 1 va04
+		perm 100
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		pat: dull 1 "freyla_kitchenfoods" 2 0 0 1
+		part 1
+		tint 200 200 0 128 128
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make lemon milkshake
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 1 and mv42 eq 2 and mv43 eq 8 and mv44 eq 7
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64735 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 29 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 30 0 0 1
+		part 1
+		tint 200 200 0 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+
+*** SPECIFIC RECIPES END ***
+*** GENUS RECIPES START *** 
+
+* Make fruit smoothie 
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 0 and mv42 eq 2 and mv43 eq 8
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv mv42 0
+		setv mv43 0
+		setv mv44 0
+		setv va04 rand 1100 1200
+		new: comp 2 25 64732 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 1 va04
+		perm 100
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		pat: dull 1 "freyla_kitchenfoods" 2 0 0 1
+		part 1
+		tint rand 128 255 rand 0 255 rand 0 255 128 128
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make seedy smoothie 
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 0 and mv42 eq 2 and mv43 eq 3
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv mv42 0
+		setv mv43 0
+		setv mv44 0
+		setv va04 rand 1100 1200
+		new: comp 2 25 64732 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 1 va04
+		perm 100
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		pat: dull 1 "freyla_kitchenfoods" 2 0 0 1
+		part 1
+		tint rand 120 130 rand 120 140 rand 120 130 128 128
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make creature smoothie 
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 0 and mv42 eq 4
+		epas mv42 mv43 0
+			dead
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv mv42 0
+		setv mv43 0
+		setv mv44 0
+		setv va04 rand 1100 1200
+		new: comp 2 25 64732 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 1 va04
+		perm 100
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		pat: dull 1 "freyla_kitchenfoods" 2 0 0 1
+		part 1
+		tint 180 20 20 128 128
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make wacky smoothie 
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 0
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv mv42 0
+		setv mv43 0
+		setv mv44 0
+		setv va04 rand 1100 1200
+		new: comp 2 25 64732 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 1 va04
+		perm 100
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		pat: dull 1 "freyla_kitchenfoods" 2 0 0 1
+		part 1
+		tint rand 0 255 rand 0 255 rand 0 255 128 128
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make raisin cracker
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 0 and mv42 eq 2 and mv43 eq 8
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64737 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 3 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 31 0 0 1
+		part 1
+		tint rand 128 200 rand 0 100 rand 128 200 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make seedy cracker
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 0 and mv42 eq 2 and mv43 eq 3
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64737 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 3 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 32 0 0 1
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make creature cracker
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 0 and mv42 eq 4
+		epas mv42 mv43 0
+			dead
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64737 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 3 va04
+		perm 100
+		tint 180 20 20 128 128
+		pat: dull 1 "freyla_kitchenfoods" 31 0 0 1
+		part 1
+		tint 180 20 20 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make wacky cracker
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 0
+		epas mv42 mv43 0
+
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64737 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 3 va04
+		perm 100
+		tint rand 0 255 rand 0 255 rand 0 255 128 128
+		pat: dull 1 "freyla_kitchenfoods" 31 0 0 1
+		part 1
+		tint rand 0 255 rand 0 255 rand 0 255 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make fruit jam
+	elif ov50 eq 0 and ov51 eq 0 and ov52 eq 1 and mv42 eq 2 and mv43 eq 8
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64733 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 33 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 34 0 0 1
+		part 1
+		tint rand 128 200 rand 0 100 rand 128 200 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make seedy jam
+	elif ov50 eq 0 and ov51 eq 0 and ov52 eq 1 and mv42 eq 2 and mv43 eq 3
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64733 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 33 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 35 0 0 1
+		part 1
+		tint rand 120 130 rand 120 140 rand 120 130 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make creature jam
+	elif ov50 eq 0 and ov51 eq 0 and ov52 eq 1 and mv42 eq 4
+		epas mv42 mv43 0
+			dead
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64733 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 33 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 34 0 0 1
+		part 1
+		tint 180 20 20 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make wacky jam
+	elif ov50 eq 0 and ov51 eq 0 and ov52 eq 1
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64733 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 33 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 34 0 0 1
+		part 1
+		tint rand 0 255 rand 0 255 rand 0 255 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make fruit-topped pancakes 
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 0 and mv42 eq 2 and mv43 eq 8
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64741 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 49 va04
+		perm 100
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make seedy pancakes 
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 0 and mv42 eq 2 and mv43 eq 3
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64741 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 45 va04
+		perm 100
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make creature pancakes 
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 0 and mv42 eq 4
+		epas mv42 mv43 0
+			dead
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64741 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 55 va04
+		perm 100
+		tint 180 20 20 128 128
+		pat: dull 1 "freyla_kitchenfoods" 59 0 0 1
+		part 1
+		tint 180 20 20 128 128
+
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make wacky pancakes 
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 0
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64741 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 55 va04
+		perm 100
+		tint rand 0 255 rand 0 255 rand 0 255 128 128
+		pat: dull 1 "freyla_kitchenfoods" 59 0 0 1
+		part 1
+		tint rand 0 255 rand 0 255 rand 0 255 128 128
+
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make raisin cookie 
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 8
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64738 "cookie" 14 6 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 53 0 0 1
+		part 1
+		tint rand 128 200 rand 0 100 rand 128 200 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+* Make seedy cookie 
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 3
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64738 "cookie" 14 6 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 54 0 0 1
+		part 1
+		tint rand 0 120 rand 0 140 rand 0 120 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+
+* Make creature cookie 
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 1 and mv42 eq 4
+		epas mv42 mv43 0
+			dead
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64738 "cookie" 14 6 va04
+		perm 100
+		pat: dull 1 "cookie" 13 0 0 1
+		part 1
+		tint 180 20 20 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+* Make wacky cookie 
+	elif ov50 eq 0 and ov51 eq 1 and ov52 eq 1
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64738 "cookie" 14 6 va04
+		perm 100
+		pat: dull 1 "cookie" 13 0 0 1
+		part 1
+		tint rand 0 255 rand 0 255 rand 0 255 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+* Make fruit milkshake
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 1 and mv42 eq 2 and mv43 eq 8
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64735 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 29 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 30 0 0 1
+		part 1
+		tint rand 128 200 rand 0 100 rand 128 200 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make seedy milkshake
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 1 and mv42 eq 2 and mv43 eq 3
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64735 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 29 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 36 0 0 1
+		part 1
+		tint rand 120 130 rand 120 140 rand 120 130 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make creature milkshake
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 1 and mv42 eq 4
+		epas mv42 mv43 0
+			dead
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64735 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 29 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 30 0 0 1
+		part 1
+		tint 180 20 20 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make wacky milkshake
+	elif ov50 eq 1 and ov51 eq 0 and ov52 eq 1
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 25 64735 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 29 va04
+		perm 100
+		pat: dull 1 "freyla_kitchenfoods" 30 0 0 1
+		part 1
+		tint rand 0 255 rand 0 255 rand 0 255 128 128
+		attr 195
+		bhvr 48
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+* Make jam cake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 8
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 9 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		wait 20
+
+
+* Make seedy cake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 3
+		dbg: outs "Conditions met for seedy cake"
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 13 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		dbg: outs "Seedy cake made"
+		wait 20
+
+* Make creature cake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 4
+		dbg: outs "Conditions met for creature cake"
+		epas mv42 mv43 0
+			dead
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 63 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		dbg: outs "Creature cake made"
+		wait 20
+
+* Make meaty cake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1 and mv42 eq 2 and mv43 eq 15
+		dbg: outs "Conditions met for meaty cake"
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 63 va04
+		perm 100
+		setv va04 1
+		pat: dull 1 "freyla_megablank" 0 0 0 va04
+
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		dbg: outs "Meaty cake made"
+		wait 20
+
+* Make wacky cake
+	elif ov50 eq 1 and ov51 eq 1 and ov52 eq 1
+		dbg: outs "Conditions met for wacky cake"
+		epas mv42 mv43 0
+			kill targ
+		next
+		snde "ding"
+		anim [0 7 8 9 9 9 8 7 0]
+		setv va02 posl
+		addv va02 95
+		setv va03 post
+		addv va03 140
+		setv va04 rand 1100 1200
+		new: comp 2 11 64739 "freyla_kitchenfoods" game "kitchenfoodsspritecount" 9 va04
+		perm 100
+		tint rand 100 150 rand 100 150 rand 100 150 128 128
+		setv va04 1
+		pat: dull 1 "freyla_kitchenfoods" 17 0 0 va04
+		part 1
+		tint rand 0 200 rand 0 200 rand 0 200 128 128
+		attr 195
+		bhvr 48
+		emit 8 0.5
+		elas 30
+		fric 50
+		accg 3
+		mvsf va02 va03
+		velo rand -5 5 rand -20 -10
+		dbg: outs "Wacky cake made"
+		wait 20
+
+*** GENUS RECIPES END ***
+
+* Reject unknown recipe
+	else
+		snde "buzz"
+		part 2
+		pose 0
+		setv ov50 0
+		part 3
+		pose 0
+		setv ov51 0
+		part 4
+		pose 0
+		setv ov52 0
+		dpas 0 0 0
+		setv mv42 0
+		setv mv43 0
+		setv mv44 0
+	endi
+
+*** Regardless of what you made, spit out any excess ingredients
+	dbg: outs "End baking script"
+	dbg: outv ov50
+	dbg: outv ov51
+	dbg: outv ov52
+	dbg: outv mv42
+	dbg: outv mv43
+	dbg: outv mv44
+	targ ownr
+	dpas 0 0 0
+	setv mv42 0
+	setv mv43 0
+	setv mv44 0
+endm
+
+*** Smoothies
+scrp 2 25 64732 12
+	snde "drnk"
+	targ from
+	chem 5 0.2
+	chem 33 0.5
+	chem 150 -0.2
+	kill ownr
+endm
+
+*** Milkshakes
+scrp 2 25 64735 12
+	snde "drnk"
+	targ from
+	chem 5 0.2
+	chem 33 0.5
+	chem 150 -0.2
+	kill ownr
+endm
+
+*** Plain cracker
+scrp 2 11 64737 12
+	snde "chwp"
+	stim writ from 79 1
+	kill ownr
+endm
+
+*** Caramel
+scrp 2 25 64733 12
+	snde "drnk"
+	targ from
+	chem 3 1
+	kill ownr
+endm
+
+
+*** Cake
+scrp 2 11 64739 12
+	snde "chwp"
+	stim writ from 79 1
+	doif pose eq 0
+		pose 1
+		part 1
+		pose 1
+	elif pose eq 1
+		pose 2
+		part 1
+		pose 2
+	elif pose eq 2
+		pose 3
+		part 1
+		pose 3
+	elif pose eq 3
+		kill ownr
+	endi
+endm
+
+*** Pancakes
+scrp 2 11 64741 12
+	snde "chwp"
+	stim writ from 79 1
+	doif pose eq 0
+		pose 1
+		part 1
+		pose 1
+	elif pose eq 1
+		pose 2
+		part 1
+		pose 2
+	elif pose eq 2
+		pose 3
+		part 1
+		pose 3
+	elif pose eq 3
+		kill ownr
+	else
+		kill ownr
+	endi
+
+endm
+
+*** Cookies
+scrp 2 11 64738 12
+	snde "chwp"
+	stim writ from 79 1
+	kill ownr
+endm
+
+*** Remove
+rscr
+* the kitchen
+enum 3 8 64733
+	kill targ
+next
+* milk
+enum 2 25 64732
+	kill targ
+next
+* milkshake
+enum 2 25 64735
+	kill targ
+next
+
+* stove food
+enum 2 11 64741
+	kill targ
+next
+* crackers
+enum 2 11 64737
+	kill targ
+next
+* caramel
+enum 2 25 64733
+	kill targ
+next
+* cookies
+enum 2 11 64738
+	kill targ
+next
+* cakes
+enum 2 11 64739
+	kill targ
+next
+
+* milkshake
+enum 2 25 64735
+	kill targ
+next
+scrx 3 8 34733 1
+scrx 3 8 34733 125
+scrx 3 8 34733 124
+scrx 3 8 34733 1042
+scrx 3 8 34733 1001
+scrx 3 8 34733 1002
+scrx 3 8 34733 1003
+scrx 3 8 34733 9

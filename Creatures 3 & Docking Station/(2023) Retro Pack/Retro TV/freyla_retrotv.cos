@@ -1,0 +1,85 @@
+* Freyla's Retro TV!
+
+* 
+
+new: simp 2 21 64741 "freyla_retrotv" 49 0 100
+attr 199
+bhvr 11
+aero 10
+perm 60
+accg 5
+elas 10
+fric 90
+tick 5
+setv va00 game "CreatorX"
+setv va01 game "CreatorY"
+doif va00 eq 0 and va01 eq 0
+	setv va00 6110
+	setv va01 9200
+endi
+doif tmvt va00 va01 eq 1
+	mvto va00 va01
+else
+	mvsf va00 va01
+endi
+setv ov00 0
+
+scrp 2 21 64741 1
+	stim writ from 97 2
+	snde "bep2"
+	doif ov00 = 0
+		pose 1
+		setv ov00 1
+	elif ov00 = 1
+		anim [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 45 46 47 48 255]
+		setv ov00 2
+	else
+		pose 0
+		setv ov00 0
+	endi
+endm
+
+scrp 2 21 64741 2
+	stim writ from 97 2
+	snde "bep2"
+	doif ov00 = 0
+		pose 1
+		setv ov00 1
+	elif ov00 = 1
+		setv ov00 2
+		anim [2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 45 46 47 48 255]
+	else
+		pose 0
+		setv ov00 0
+	endi
+endm
+
+scrp 2 21 64741 3
+	sndc "hit_"
+	velo 0 rand -5 -10
+	stim writ from 92 1
+	pose 0
+	setv ov00 0
+endm
+
+scrp 2 21 64741 9
+	doif ov00 = 2
+		rnge 400
+		esee 4 0 0
+			doif targ ne null
+				driv 11 -1
+				driv 11 -1
+			endi
+		next
+	else
+	endi
+endm
+
+rscr
+enum 2 21 64741
+	kill targ
+next
+scrx 2 21 64741 1
+scrx 2 21 64741 2
+scrx 2 21 64741 3
+scrx 2 21 64741 9

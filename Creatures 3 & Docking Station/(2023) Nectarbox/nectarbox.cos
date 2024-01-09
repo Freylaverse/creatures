@@ -1,0 +1,58 @@
+* Nectarbox!
+
+new: simp 2 8 64738 "nectarbox" 9 0 100
+perm 100
+attr 210
+bhvr 16
+emit 6 0.5
+accg 5
+elas 0
+tick 500
+setv va00 game "CreatorX"
+setv va01 game "CreatorY"
+doif va00 eq 0 and va01 eq 0
+	setv va00 6110
+	setv va01 9200
+endi
+doif tmvt va00 va01 eq 1
+	mvto va00 va01
+else
+	mvsf va00 va01
+endi
+
+* Nectar accumulation script
+scrp 2 8 64738 9
+	doif pose eq 0
+		pose 1
+		attr 194
+	elif pose eq 1
+		pose 2
+	elif pose eq 2
+		pose 3
+		anim [3 3 4 4 5 5 6 6 7 7 8 8 8 3 255]
+	else
+	endi
+endm
+
+* Eat script
+scrp 2 8 64738 12
+	snde "drnk"
+	stim writ from 78 1
+	doif pose gt 2
+		pose 2
+	elif pose eq 2
+		pose 1
+	elif pose eq 1
+		pose 0
+		attr 210
+	else
+	endi
+endm
+
+* Remove 
+rscr
+enum 2 8 64738
+	kill targ
+next
+scrx 2 8 64738 9
+scrx 2 8 64738 12

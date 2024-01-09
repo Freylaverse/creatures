@@ -1,0 +1,69 @@
+* Mussel Stick!
+
+new: simp 2 15 64733 "musselstick" 6 0 100
+perm 100
+attr 210
+bhvr 16
+emit 6 0.5
+accg 5
+elas 0
+tick 2000
+setv va00 game "CreatorX"
+setv va01 game "CreatorY"
+doif va00 eq 0 and va01 eq 0
+	setv va00 6110
+	setv va01 9200
+endi
+doif tmvt va00 va01 eq 1
+	mvto va00 va01
+else
+	mvsf va00 va01
+endi
+
+* Growth script
+scrp 2 15 64733 9
+	doif rtyp room ownr eq 8 or rtyp room ownr eq 9
+		doif pose eq 0
+			pose 1
+		elif pose eq 1
+			pose 2
+			attr 194
+		elif pose eq 2
+			pose 3
+		elif pose eq 3
+			pose 4
+		elif pose eq 4
+			pose 5
+		else
+		endi
+	else
+	endi
+endm
+
+* Eat script
+scrp 2 15 64733 12
+	snde "chwp"
+	stim writ from 80 1
+	doif pose eq 1
+		pose 0
+		attr 210
+	elif pose eq 2
+		pose 1
+	elif pose eq 3
+		pose 2
+	elif pose eq 4
+		pose 3
+	elif pose eq 5
+		pose 4
+	else
+
+	endi
+endm
+
+* Remove
+rscr
+enum 2 15 64733
+	kill targ
+next
+scrx 2 15 64733 9
+scrx 2 15 64733 12

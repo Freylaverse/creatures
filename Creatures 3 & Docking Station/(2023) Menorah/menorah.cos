@@ -1,0 +1,321 @@
+* MENORAH AGENT *
+* CCSF 2023     *
+
+***
+new: simp 2 24 64738 "menorah" 255 0 1000
+frat 1
+attr 215
+accg 2
+elas 0
+* ov00 stores what day of hanukkah it is!
+* starts on the 1st 
+setv ov00 1
+* ov01 stores whether we have candles!
+* starts at 0 (no candles)
+setv ov01 0
+* ov02 stores whether the candles are burning!
+* starts at 0 (it's not burning)
+setv ov02 0
+* positioning script
+setv va00 game "CreatorX"
+setv va01 game "CreatorY"
+doif va00 eq 0 and va01 eq 0
+	setv va00 6110
+	setv va01 9200
+endi
+doif tmvt va00 va01 eq 1
+	mvto va00 va01
+else
+	mvsf va00 va01
+endi
+
+* activation script
+scrp 2 24 64738 1
+* ctrl + shift + click resets what day of hanukkah it is to 1!
+	doif keyd 16 eq 1 and keyd 17 eq 1
+		snde "mnor"
+		setv ov00 1
+* do nothing if candles are already lit!
+	elif ov02 eq 1
+* if day 1 + no candles, add candles
+	elif ov00 eq 1 and ov01 eq 0
+		setv ov01 1
+		lock
+		anim [0 1 2 3]
+		over
+		unlk
+* if day 1 + candles 
+	elif ov00 eq 1 and ov01 eq 1
+		setv ov02 1
+		lock
+		anim [3 4 5]
+		over
+		wait 10
+		anim [5 6 7 8 9 10 11 12 13 14 15]
+		over
+		unlk
+		tick 500
+* if day 2 + no candles, add candles
+	elif ov00 eq 2 and ov01 eq 0
+		setv ov01 1
+		lock
+		anim [0 19 20 21]
+		over
+		unlk
+* if day 2 + candles, light candles
+	elif ov00 eq 2 and ov01 eq 1
+		setv ov02 1
+		lock
+		anim [21 22 23]
+		over
+		wait 10
+		anim [23 24 25 26 27 28 29 30 31 32 33 34 35]
+		over
+		unlk
+		tick 500
+* if day 3 + no candles, add candles
+	elif ov00 eq 3 and ov01 eq 0
+		setv ov01 1
+		lock
+* candle adding animation
+		anim [0 39 40 41]
+		over
+		unlk
+* if day 3 + candles 
+	elif ov00 eq 3 and ov01 eq 1
+		setv ov02 1
+		lock
+		anim [41 42 43]
+		over
+		wait 10
+* menorah lighting animation
+		anim [43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61]
+		over
+		unlk
+		tick 500
+
+* if day 4 + no candles, add candles
+	elif ov00 eq 4 and ov01 eq 0
+		setv ov01 1
+		lock
+* candle adding animation
+		anim [0 65 66 67]
+		over
+		unlk
+* if day 4 + candles 
+	elif ov00 eq 4 and ov01 eq 1
+		setv ov02 1
+		lock
+		anim [67 68 69]
+		over
+		wait 10
+* menorah lighting animation
+		anim [69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91]
+		over
+		unlk
+		tick 500
+
+* if day 5 + no candles, add candles
+	elif ov00 eq 5 and ov01 eq 0
+		setv ov01 1
+		lock
+* candle adding animation
+		anim [0 95 96 97]
+		over
+		unlk
+* if day 5 + candles 
+	elif ov00 eq 5 and ov01 eq 1
+		setv ov02 1
+		lock
+		anim [97 98 99]
+		over
+		wait 10
+* menorah lighting animation
+		anim [99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125]
+		over
+		unlk
+		tick 500
+
+* if day 6 + no candles, add candles
+	elif ov00 eq 6 and ov01 eq 0
+		setv ov01 1
+		lock
+* candle adding animation
+		anim [0 129 130 131]
+		over
+		unlk
+* if day 6 + candles 
+	elif ov00 eq 6 and ov01 eq 1
+		setv ov02 1
+		lock
+		anim [131 132 133]
+		over
+		wait 10
+* menorah lighting animation
+		anim [133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163]
+		over
+		unlk
+		tick 500
+
+* if day 7 + no candles, add candles
+	elif ov00 eq 7 and ov01 eq 0
+		setv ov01 1
+		lock
+* candle adding animation
+		anim [0 167 168 169]
+		over
+		unlk
+* if day 7 + candles 
+	elif ov00 eq 7 and ov01 eq 1
+		setv ov02 1
+		lock
+		anim [169 170 171]
+		over
+		wait 10
+* menorah lighting animation
+		anim [171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205]
+		over
+		unlk
+		tick 500
+
+* if day 8 + no candles, add candles
+	elif ov00 eq 8 and ov01 eq 0
+		setv ov01 1
+		lock
+* candle adding animation
+		anim [0 209 210 211]
+		over
+		unlk
+* if day 8 + candles 
+	elif ov00 eq 8 and ov01 eq 1
+		setv ov02 1
+		lock
+		anim [211 212 213]
+		over
+		wait 10
+* menorah lighting animation
+		anim [213 214 215 216 217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232 233 234 235 236 237 238 239 240 241 242 243 244 245 246 247 248 249 250 251]
+		over
+		unlk
+		tick 500
+	endi
+endm
+
+
+* timer script
+scrp 2 24 64738 9
+* day 1 burning
+	doif ov02 eq 1
+		doif pose eq 15
+			addv ov00 1
+			pose 16
+		elif pose eq 16
+			pose 17
+		elif pose eq 17
+			pose 18
+			setv ov01 0
+			setv ov02 0
+			tick 0
+			wait 100
+			pose 0
+* day 2 burning
+		elif pose eq 35
+			addv ov00 1
+			pose 36
+		elif pose eq 36
+			pose 37
+		elif pose eq 37
+			pose 38
+			setv ov01 0
+			setv ov02 0
+			tick 0
+			wait 100
+			pose 0
+* day 3 burning
+		elif pose eq 61
+			addv ov00 1
+			pose 62
+		elif pose eq 62
+			pose 63
+		elif pose eq 63
+			pose 64
+			setv ov01 0
+			setv ov02 0
+			tick 0
+			wait 100
+			pose 0
+* day 4 burning
+		elif pose eq 91
+			addv ov00 1
+			pose 92
+		elif pose eq 92
+			pose 93
+		elif pose eq 93
+			pose 94
+			setv ov01 0
+			setv ov02 0
+			tick 0
+			wait 100
+			pose 0
+* day 5 burning
+		elif pose eq 125
+			addv ov00 1
+			pose 126
+		elif pose eq 126
+			pose 127
+		elif pose eq 127
+			pose 128
+			setv ov01 0
+			setv ov02 0
+			tick 0
+			wait 100
+			pose 0
+* day 6 burning
+		elif pose eq 163
+			addv ov00 1
+			pose 164
+		elif pose eq 164
+			pose 165
+		elif pose eq 165
+			pose 166
+			setv ov01 0
+			setv ov02 0
+			tick 0
+			wait 100
+			pose 0
+* day 7 burning
+		elif pose eq 205
+			addv ov00 1
+			pose 206
+		elif pose eq 206
+			pose 207
+		elif pose eq 207
+			pose 208
+			setv ov01 0
+			setv ov02 0
+			tick 0
+			wait 100
+			pose 0
+* day 8 burning
+		elif pose eq 251
+			setv ov00 1
+			pose 252
+		elif pose eq 252
+			pose 253
+		elif pose eq 253
+			pose 254
+			setv ov01 0
+			setv ov02 0
+			tick 0
+			wait 100
+			pose 0
+		endi
+	endi
+endm
+
+rscr
+enum 2 24 64738
+	kill targ
+next
+scrx 2 24 64738 9
+scrx 2 24 64738 1

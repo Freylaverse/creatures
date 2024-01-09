@@ -1,0 +1,107 @@
+* Freyla's Retro Vendor!
+
+* 
+
+new: simp 2 23 64733 "freyla_retrovendor" 21 0 100
+attr 199
+bhvr 11
+aero 10
+perm 60
+accg 5
+elas 10
+fric 90
+tick 5
+setv va00 game "CreatorX"
+setv va01 game "CreatorY"
+doif va00 eq 0 and va01 eq 0
+	setv va00 6110
+	setv va01 9200
+endi
+doif tmvt va00 va01 eq 1
+	mvto va00 va01
+else
+	mvsf va00 va01
+endi
+setv ov00 0
+
+scrp 2 23 64733 1
+	stim writ from 90 1
+	lock
+	snde "rvnd"
+	anim [2 3 4 5 6 7 8 9 10 11 12 13 14 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0]
+	wait 25
+	setv va02 posl
+	addv va02 30
+	setv va03 post
+	addv va03 30
+	setv va04 rand 16 20
+	inst
+	new: simp 2 11 64734 "freyla_retrovendor" 21 va04 4900
+	attr 195
+	bhvr 48
+	elas 30
+	fric 50
+	accg 3
+	mvto va02 va03
+	velo rand 0 5 rand 10 20
+	unlk
+endm
+
+scrp 2 23 64733 2
+	stim writ from 90 1
+	lock
+	snde "rvnd"
+	anim [2 3 4 5 6 7 8 9 10 11 12 13 14 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0]
+	wait 25
+	setv va02 posl
+	addv va02 30
+	setv va03 post
+	addv va03 30
+	setv va04 rand 16 20
+	inst
+	new: simp 2 11 64734 "freyla_retrovendor" 21 va04 4900
+	attr 195
+	bhvr 48
+	elas 30
+	fric 50
+	accg 3
+	mvto va02 va03
+	velo rand 0 5 rand 10 20
+	unlk
+endm
+
+scrp 2 23 64733 3
+	sndc "hit_"
+	velo 0 rand -5 -10
+	stim writ from 92 1
+	pose 0
+	setv ov00 0
+endm
+
+scrp 2 11 64734 12
+	snde "chwp"
+	stim writ from 79 1
+	stim writ from 78 1
+	targ from
+	chem 3 0.3
+	chem 13 0.3
+	chem 112 0.3
+	chem 99 0.3
+	chem 33 0.3
+	chem 149 -1
+	chem 150 -1
+	chem 151 -1
+	kill ownr
+endm
+
+rscr
+enum 2 23 64733
+	kill targ
+next
+enum 2 11 64734
+	kill targ
+next
+scrx 2 11 64734 12
+scrx 2 23 64733 1
+scrx 2 23 64733 2
+scrx 2 23 64733 3

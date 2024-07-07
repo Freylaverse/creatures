@@ -1,0 +1,3977 @@
+* 1 1 64741 - Wolfling Tool
+* 2 21 64745 - Temptoys
+* 2 24 64740 - Fireballs
+* 2 24 64741 - Iceballs
+
+doif totl 1 1 64741 eq 0
+	new: comp 1 1 64741 "freyla_wolflingtool" 132 0 9000
+	attr 52
+	flto 90 150
+* ov00 = panel open?
+	setv ov00 0
+* ov01 = events difficulty
+	setv ov01 0
+* ov02 - ov04 = C1-C3 enabled
+	doif game "C1_to_DS_Loaded" = 1 or eame "C1_to_DS_Loaded" = 1
+		setv ov02 1
+	else
+		setv ov02 0
+	endi
+	doif totl 1 3 50200 ne 0
+		setv ov03 1
+	else
+		setv ov03 0
+	endi
+	doif eame "engine_no_auxiliary_bootstrap_1" = 0 and totl 1 4 1 ne 0
+		setv ov04 1
+	else
+		setv ov04 0
+	endi
+	doif game "C1_to_DS_Loaded" = 1 and totl 1 3 50200 ne 0
+		setv ov02 0
+		setv ov03 0
+	endi
+* ov05 = auto on?
+	setv ov05 0
+* ov10 = active genus (0 = any, 1 = norn, 2 = grendel, 3 = ettin, 4 = geat)
+* Guess what your dominant species is most likely
+	doif totl 4 4 0 eq 0 and totl 4 3 0 eq 0 and totl 4 2 0 eq 0 and totl 4 1 0 eq 0
+		setv ov10 0
+	elif totl 4 4 0 ge totl 4 3 0 and totl 4 4 0 ge totl 4 2 0 and totl 4 4 0 ge totl 4 1 0
+		setv ov10 4
+	elif totl 4 3 0 ge totl 4 2 0 and totl 4 3 0 ge totl 4 1 0
+		setv ov10 3
+	elif totl 4 2 0 ge totl 4 1 0
+		setv ov10 2
+	else
+		setv ov10 1
+	endi
+* ov11 = current diet (0 = herbivorous, 1 = carnivorous, 2 = detrivorous)
+	setv ov11 0
+* ov12 = persistent toys? (0 = temporary, 1 = persistent)
+	setv ov12 0
+* ov13 = manual locations? (0 = no, 1 = yes)
+	setv ov13 0
+* ov14 = plague all? (0 = no, 1 = yes)
+	setv ov14 0
+* ov15 = love time hormones? (0 = no, 1 = yes)
+	setv ov15 0
+* ov16 = heal all? (0 = no, 1 = yes)
+	setv ov16 0
+* ov17 = Timer State
+* 0 = no timed events going on, 1 = timed event playing, 2 = timed event paused
+	setv ov17 0
+* ov18 Last-used framerate
+	setv ov18 1
+* ov19 Are norns/an event being manually paused?
+	setv ov19 0
+* ov20 Minipanel open?
+	setv ov20 0
+* ov21 Which event should the minipanel load? (1-12)
+	setv ov21 1
+* ov23 Lock custom locations?
+	setv ov23 0
+* ov51 - ov62 = Event availability
+	setv ov51 1
+	setv ov52 1
+	setv ov53 1
+	setv ov54 1
+	setv ov55 1
+	setv ov56 1
+	setv ov57 1
+	setv ov58 1
+	setv ov59 1
+	setv ov60 1
+	setv ov61 1
+	setv ov62 1
+* ov71 - ov82 = Custom sliders
+	setv ov71 2
+	setv ov72 3
+	setv ov73 2
+	setv ov75 1
+	setv ov76 2
+	setv ov78 2
+	setv ov79 2
+	setv ov80 2
+	setv ov81 3
+	setv ov82 1
+endi
+
+* Main Panel Toggle Script
+scrp 1 1 64741 1
+* Is there a timer event going on?
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to toggle panel; another event in progress"
+		snde "buzz"
+		mesg writ ownr 1029
+	endi
+	doif pose eq 0
+		setv ov00 1
+		pose 1
+	else
+		doif ov20 eq 1
+			part 49
+			pose 9
+			pat: kill 50
+			pat: kill 51
+			pat: kill 52
+			pat: kill 53
+			pat: kill 54
+			pat: kill 55
+			pat: kill 56
+			part 49
+			anim [9 8 7 6 5 4 3 2 1 0]
+			snde "no__"
+			over
+			pat: kill 49
+			setv ov20 0
+		endi
+		part 0
+		setv ov00 0
+		pat: kill 2
+		pat: kill 3
+		pat: kill 4
+		pat: kill 5
+		pat: kill 6
+		pat: kill 7
+		pat: kill 8
+		pat: kill 9
+		pat: kill 10
+		pat: kill 11
+		pat: kill 12
+		pat: kill 13
+		pat: kill 14
+		pat: kill 15
+		pat: kill 16
+		pat: kill 17
+		pat: kill 18
+		pat: kill 19
+		pat: kill 20
+		pat: kill 21
+		pat: kill 22
+		pat: kill 23
+		pat: kill 24
+		pat: kill 25
+		pat: kill 26
+		pat: kill 27
+		pat: kill 28
+		pose 0
+		doif ov05 eq 1
+			frat 10
+			anim [0 130 255]
+		else
+			frat 1
+			pose 0
+		endi
+	endi
+* Create buttons according to existing settings
+	doif ov00 eq 1
+* Difficulty
+		pat: butt 2 "freyla_wolflingtool" 4 3 91 114 1 [] 1002 1
+		doif ov01 eq 2
+			part 2
+			anim [0 1 2]
+		elif ov01 eq 1
+			part 2
+			pose 1
+		endi
+* Wheel
+		pat: butt 3 "freyla_wolflingtool" 37 34 21 121 1 [] 1003 1
+* Location
+		pat: butt 4 "freyla_wolflingtool" 7 2 33 64 1 [] 1004 1
+		doif ov02 eq 1
+			part 4
+			pose 1
+		endi
+		pat: butt 5 "freyla_wolflingtool" 9 2 80 64 1 [] 1005 1
+		doif ov03 eq 1
+			part 5
+			pose 1
+		endi
+		pat: butt 6 "freyla_wolflingtool" 11 2 131 64 1 [] 1006 1
+		doif ov04 eq 1
+			part 6
+			pose 1
+		endi
+* Auto
+		pat: butt 7 "freyla_wolflingtool" 2 2 312 186 1 [] 1007 1
+		doif ov05 eq 1
+			part 7
+			pose 1
+		endi
+* Quick Events
+		pat: butt 8 "freyla_wolflingtool" 13 2 207 75 1 [] 1008 1
+		pat: butt 9 "freyla_wolflingtool" 15 2 250 75 1 [] 1009 1
+		pat: butt 10 "freyla_wolflingtool" 17 2 294 75 1 [] 1010 1
+		pat: butt 11 "freyla_wolflingtool" 19 2 337 75 1 [] 1011 1
+		pat: butt 12 "freyla_wolflingtool" 21 2 207 115 1 [] 1012 1
+		pat: butt 13 "freyla_wolflingtool" 23 2 250 115 1 [] 1013 1
+		pat: butt 14 "freyla_wolflingtool" 25 2 294 115 1 [] 1014 1
+		pat: butt 15 "freyla_wolflingtool" 27 2 337 115 1 [] 1015 1
+		pat: butt 16 "freyla_wolflingtool" 29 2 207 154 1 [] 1016 1
+		pat: butt 17 "freyla_wolflingtool" 31 2 250 154 1 [] 1017 1
+		pat: butt 18 "freyla_wolflingtool" 33 2 294 154 1 [] 1018 1
+		pat: butt 19 "freyla_wolflingtool" 35 2 337 154 1 [] 1019 1
+* Creature Filters
+		pat: butt 20 "freyla_wolflingtool" 71 2 168 187 1 [] 1020 1
+		doif ov10 eq 1
+			part 20
+			pose 1
+		endi
+		pat: butt 21 "freyla_wolflingtool" 73 2 197 187 1 [] 1021 1
+		doif ov10 eq 3
+			part 21
+			pose 1
+		endi
+		pat: butt 22 "freyla_wolflingtool" 75 2 226 187 1 [] 1022 1
+		doif ov10 eq 2
+			part 22
+			pose 1
+		endi
+		pat: butt 23 "freyla_wolflingtool" 77 2 255 187 1 [] 1023 1
+		doif ov10 eq 4
+			part 23
+			pose 1
+		endi
+* Timer
+		pat: dull 24 "freyla_wolflingtool" 79 369 63 1
+* Settings
+		pat: butt 25 "freyla_wolflingtool" 131 2 321 22 1 [] 1025 1
+* Play
+		pat: butt 26 "freyla_wolflingtool" 133 2 342 22 1 [] 1026 1
+* Pause
+		pat: butt 27 "freyla_wolflingtool" 135 2 363 22 1 [] 1027 1
+		doif ov19 eq 1
+			part 27
+			pose 1
+		endi
+* Stop
+		pat: butt 28 "freyla_wolflingtool" 137 2 384 22 1 [] 1028 1
+	endi
+endm
+
+* Difficulty switch
+scrp 1 1 64741 1002
+* Is there a timer event going on?
+	doif ov17 ne 0
+		part 24
+		setv va42 pose
+		pose va42
+	endi
+
+	part 2
+	doif ov01 eq 0
+		setv ov01 1
+		pose 1
+	elif ov01 eq 1
+		setv ov01 2
+		pose 2
+	elif ov01 eq 2
+		setv ov01 0
+		pose 0
+	endi
+
+	mesg writ ownr 1029
+endm
+
+* Wheel Spin!
+scrp 1 1 64741 1003
+* 1008 - war time (51)
+* 1009 - play time (52)
+* 1010 - haste (53)
+* 1011 - feast (54)
+* 1012 - relo (55)
+* 1013 - rela (56)
+* 1014 - plague (57)
+* 1015 - love time (58)
+* 1016 - heatwave (59)
+* 1017 - coldsnap (60)
+* 1018 - heal (61)
+* 1019 - sting (62)
+
+* Is there a timer event going on?
+	doif ov17 ne 0
+		part 24
+		setv va42 pose
+		pose va42
+	endi
+
+	dbg: outs "WOLFLING TOOL: [START] Attempting to use wheel!"
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] No eligible creatures in world"
+		mesg writ ownr 1029
+		stop
+	endi
+
+	lock
+* Set base weights
+	setv va51 ov51
+	setv va52 ov52
+	setv va53 ov53
+	setv va54 ov54
+	setv va55 ov55
+	setv va56 ov56
+	setv va57 ov57
+	setv va58 ov58
+	setv va59 ov59
+	setv va60 ov60
+	setv va61 ov61
+	setv va62 ov62
+
+* Remove relocate events if there's nowhere to go
+	doif ov13 eq 0 and ov02 eq 0 and ov03 eq 0 and ov04 eq 0
+		setv va55 0
+		setv va56 0
+	elif ov13 eq 1 and totl 1 1 64748 eq 0
+		setv va55 0
+		setv va56 0
+	endi
+
+* Remove timed events if there's already a timer
+	doif ov17 ne 0
+		setv va51 0
+		setv va53 0
+		setv va58 0
+	endi
+
+* See if we have any events available
+	inst
+	setv va00 0
+	addv va00 va51
+	addv va00 va52
+	addv va00 va53
+	addv va00 va54
+	addv va00 va55
+	addv va00 va56
+	addv va00 va57
+	addv va00 va58
+	addv va00 va59
+	addv va00 va60
+	addv va00 va61
+	addv va00 va62
+	doif va00 eq 0
+		snde "excl"
+		dbg: outs "WOLFLING TOOL: [END] No events available to trigger"
+		mesg writ ownr 1029
+		stop
+	else
+
+* Apply difficulty multipliers
+		doif ov01 eq 0
+			mulv va52 2
+			mulv va54 2
+			mulv va58 2
+			mulv va61 2
+		elif ov01 eq 1
+		elif ov01 eq 2
+			mulv va51 2
+			mulv va57 2
+			mulv va59 2
+			mulv va60 2
+			mulv va62 2
+		endi
+
+* Find new cumulative weight and set va's to position markers
+		setv va00 0
+		doif va51 ne 0
+			addv va00 va51
+			setv va51 va00
+		endi
+		doif va52 ne 0
+			addv va00 va52
+			setv va52 va00
+		endi
+		doif va53 ne 0
+			addv va00 va53
+			setv va53 va00
+		endi
+		doif va54 ne 0
+			addv va00 va54
+			setv va54 va00
+		endi
+		doif va55 ne 0
+			addv va00 va55
+			setv va55 va00
+		endi
+		doif va56 ne 0
+			addv va00 va56
+			setv va56 va00
+		endi
+		doif va57 ne 0
+			addv va00 va57
+			setv va57 va00
+		endi
+		doif va58 ne 0
+			addv va00 va58
+			setv va58 va00
+		endi
+		doif va59 ne 0
+			addv va00 va59
+			setv va59 va00
+		endi
+		doif va60 ne 0
+			addv va00 va60
+			setv va60 va00
+		endi
+		doif va61 ne 0
+			addv va00 va61
+			setv va61 va00
+		endi
+		doif va62 ne 0
+			addv va00 va62
+			setv va62 va00
+		endi
+
+* Pick an event to trigger
+		setv va01 rand 0 va00
+
+* If the panel is open, spin the wheel! Otherwise, just play the sound.
+		doif ov00 eq 1
+			part 3
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33]
+			snde "star"
+			over
+		else
+			snde "star"
+		endi
+		targ ownr
+* See which event we picked and trigger it
+		doif va01 le va51
+			dbg: outs "WOLFLING TOOL: [END] War time randomly selected"
+			mesg writ ownr 1008
+
+		elif va01 le va52
+			dbg: outs "WOLFLING TOOL: [END] Play time randomly selected"
+			mesg writ ownr 1009
+
+		elif va01 le va53
+			dbg: outs "WOLFLING TOOL: [END] Haste randomly selected"
+			mesg writ ownr 1010
+
+		elif va01 le va54
+			dbg: outs "WOLFLING TOOL: [END] Feast randomly selected"
+			mesg writ ownr 1011
+
+		elif va01 le va55
+			dbg: outs "WOLFLING TOOL: [END] Relocate randomly selected"
+			mesg writ ownr 1012
+
+		elif va01 le va56
+			dbg: outs "WOLFLING TOOL: [END] Relocate all randomly selected"
+			mesg writ ownr 1013
+
+		elif va01 le va57
+			dbg: outs "WOLFLING TOOL: [END] Plague randomly selected"
+			mesg writ ownr 1014
+
+		elif va01 le va58
+			dbg: outs "WOLFLING TOOL: [END] Love time randomly selected"
+			mesg writ ownr 1015
+
+		elif va01 le va59
+			dbg: outs "WOLFLING TOOL: [END] Heatwave randomly selected"
+			mesg writ ownr 1016
+
+		elif va01 le va60
+			dbg: outs "WOLFLING TOOL: [END] Cold snap randomly selected"
+			mesg writ ownr 1017
+
+		elif va01 le va61
+			dbg: outs "WOLFLING TOOL: [END] Heal randomly selected"
+			mesg writ ownr 1018
+
+		elif va01 le va62
+			dbg: outs "WOLFLING TOOL: [END] Stingers randomly selected"
+			mesg writ ownr 1019
+
+		endi
+	endi
+	unlk
+
+
+endm
+
+* Location switches!
+* Note: These assume C1toDS and C2toDS incompatibility.
+* I know some people have gotten it to work.
+* But I am not one of those people.
+* So I can't quite test it lol.
+
+* C1 toggle
+scrp 1 1 64741 1004
+	doif game "C1_to_DS_Loaded" eq 1 and ov13 ne 1
+		doif ov02 eq 0
+			setv ov03 0
+			part 5
+			pose 0
+			setv ov02 1
+			part 4
+			pose 1
+		else
+			setv ov02 0
+			part 4
+			pose 0
+		endi
+	else
+		snde "buzz"
+	endi
+
+	mesg writ ownr 1029
+endm
+
+* C2 toggle
+scrp 1 1 64741 1005
+	doif totl 1 3 50200 ne 0 and ov13 ne 1
+
+		doif ov03 eq 0
+			setv ov02 0
+			part 4
+			pose 0
+			setv ov03 1
+			part 5
+			pose 1
+		else
+			setv ov03 0
+			part 5
+			pose 0
+		endi
+	else
+		snde "buzz"
+	endi
+	mesg writ ownr 1029
+endm
+
+* C3 toggle
+scrp 1 1 64741 1006
+	doif eame "engine_no_auxiliary_bootstrap_1" = 0 and totl 1 4 1 ne 0 and ov13 ne 1
+		doif ov04 eq 0
+			setv ov04 1
+			part 6
+			pose 1
+		else
+			setv ov04 0
+			part 6
+			pose 0
+		endi
+	else
+		snde "buzz"
+	endi
+
+	mesg writ ownr 1029
+endm
+
+* Auto-event toggle
+scrp 1 1 64741 1007
+* Is there a timer event going on?
+	doif ov17 ne 0
+		part 24
+		setv va42 pose
+		pose va42
+	endi
+
+	doif ov05 eq 0
+		setv ov05 1
+		part 7
+* Event frequency scales with population
+		doif totl 4 ov10 0 gt 20
+			tick 500
+		elif totl 4 ov10 0 gt 10
+			tick 750
+		else
+			tick 1000
+		endi
+		pose 1
+		mesg writ ownr 1003
+	else
+		setv ov05 0
+		part 7
+		tick 0
+		pose 0
+	endi
+
+	mesg writ ownr 1029
+
+endm
+
+* Auto-event timer script
+scrp 1 1 64741 9
+	mesg writ ownr 1003
+	doif totl 4 ov10 0 gt 20
+		tick 500
+	elif totl 4 ov10 0 gt 10
+		tick 750
+	else
+		tick 1000
+	endi
+endm
+
+* War Time
+scrp 1 1 64741 1008
+* Is there a timer event going on?
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate War Time; another event in progress"
+		snde "buzz"
+		mesg writ ownr 1029
+	endi
+
+	dbg: outs "WOLFLING TOOL: [START] War Time button pressed"
+
+	doif ov00 eq 1
+		part 8
+		anim [0 1 0 1 0 1 0]
+		over
+	endi
+
+* Ctrl + shift + click 
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 1
+			dbg: outs "WOLFLING TOOL: [END] Failed to open War Time settings; War Time settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening War Time settings"
+			setv ov21 1
+			mesg writ ownr 1049
+		endi
+	endi
+*	doif keyd 16 eq 1 and keyd 17 eq 1
+*		inst
+*		enum 4 ov10 0
+*			chem 90 -1
+*			chem 148 -1
+*			urge writ targ -1 2 -1 2
+*		next
+*		dbg: outs "WOLFLING TOOL: Clearing urges and removing wounded and pain."
+*		stop
+*	endi
+
+
+* Okay, go ahead.	
+
+	doif totl 4 ov10 0 eq 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate War Time; no eligible creatures in world!"
+		snde "buzz"
+		mesg writ ownr 1029
+		stop
+	endi
+	setv va15 ov10
+	dbg: outs "WOLFLING TOOL: Initiating War Time"
+	snde "bep2"
+*** WARTIME PROCESS ***
+	inst
+	enum 4 va15 0
+*Kill each other
+		doif gnus eq 1
+			setv va16 36
+		elif gnus eq 2
+			setv va16 37
+		elif gnus eq 3
+			setv va16 38
+		elif gnus eq 4
+			setv va16 39
+		endi
+		urge writ targ va16 2 13 2
+		sezz "</3!"
+	next
+*** END WARTIME PROCESS ***
+	targ ownr
+* Use the existing timer if the panel is open, otherwise make a new one!
+	doif ov00 eq 1
+	else
+		pat: dull 24 "freyla_wolflingtool" 79 45 0 1
+		pat: dull 8 "freyla_wolflingtool" 13 15 60 1
+		part 8
+		anim [0 0 0 1 1 1 255]
+	endi
+* Determine wartime duration!
+	setv va88 3
+	doif ov01 eq 0
+		subv va88 1
+	elif ov01 eq 2
+		addv va88 1
+	endi
+	doif ov71 eq 1
+		subv va88 1
+	elif ov71 eq 3
+		addv va88 1
+	endi
+	part 24
+	setv ov17 1
+	setv ov18 va88
+	frat va88
+	anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 0]
+	over
+	lock
+	setv ov17 0
+	inst
+	doif ov00 eq 0
+		pat: kill 24
+		pat: kill 8
+	endi
+	enum 4 va15 0
+		urge writ targ -1 2 -1 2
+		sezz "phew..."
+	next
+	dbg: outs "WOLFLING TOOL: [END] War Time over"
+	unlk
+
+	mesg writ ownr 1029
+
+endm
+
+* Play Time
+scrp 1 1 64741 1009
+* Is there a timer event going on?
+	doif ov17 ne 0
+		part 24
+		setv va42 pose
+		pose va42
+	endi
+
+	dbg: outs "WOLFLING TOOL: [START] Play Time button pressed"
+	doif ov00 eq 1
+		part 9
+		anim [0 1 0 1 0 1 0]
+		over
+	else
+		pat: dull 9 "freyla_wolflingtool" 15 15 60 1
+		part 9
+		anim [0 1 0 1 0 1 0]
+		over
+		pat: kill 9
+	endi
+* Ctrl + shift + click 
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 2
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Play Time settings; Play Time settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Play Time settings"
+			setv ov21 2
+			mesg writ ownr 1049
+		endi
+	endi
+* Shift + ctrl + click
+*	doif keyd 16 eq 1 and keyd 17 eq 1
+*		inst
+*		enum 2 21 64745
+*			kill targ
+*		next
+*		dbg: outs "WOLFLING TOOL: Cleaning up temptoys"
+*		stop
+*	endi
+* Okay, go ahead.
+
+
+	doif totl 4 ov10 0 eq 0
+		dbg: outs "WOLFLING TOOL: [END] Play Time failed; no eligible creatures in world!"
+		snde "buzz"
+		mesg writ ownr 1029
+		stop
+	endi
+	snde "bep2"
+	dbg: outs "WOLFLING TOOL: Initiating Play Time"
+	inst
+	setv va12 ov12
+	setv va88 ov72
+	enum 4 ov10 0
+		setv va01 posx
+		setv va02 post
+		reps va88
+			new: simp 2 21 64745 "freyla_temptoys" 7 rand 0 6 563
+			attr 199
+			doif va12 eq 1
+				tick 0
+			else
+				tick rand 750 1250
+			endi
+			setv ov12 va12
+			bhvr 47
+			perm 64
+			accg 1
+			elas 50
+			fric 99
+			emit 19 .5
+			velo rand -5 5 rand -5 9
+			doif tmvt va01 va02 eq 1
+				mvsf va01 va02
+			else
+				kill targ
+			endi
+		repe
+	next
+	dbg: outs "WOLFLING TOOL: [END] Play Time over"
+
+	mesg writ ownr 1029
+
+endm
+
+* temptoy scripts!
+
+scrp 2 21 64745 0
+	inst
+	stim writ from 97 1
+	targ ownr
+	doif ov12 eq 1
+		snde "dsqu"
+		velo rand -2 2 -10
+	else
+		snde "pop1"
+		kill ownr
+	endi
+endm
+
+scrp 2 21 64745 1
+	inst
+	stim writ from 97 1
+	targ ownr
+	doif ov12 eq 1
+		snde "dsqu"
+		velo rand -2 2 -10
+	else
+		snde "pop1"
+		kill ownr
+	endi
+
+endm
+
+scrp 2 21 64745 2
+	inst
+	stim writ from 97 1
+	targ ownr
+	doif ov12 eq 1
+		snde "dsqu"
+		velo rand -2 2 -10
+	else
+		snde "pop1"
+		kill ownr
+	endi
+endm
+
+scrp 2 21 64745 3
+	inst
+	stim writ from 97 1
+	targ ownr
+	doif ov12 eq 1
+		snde "dsqu"
+		velo rand -2 2 -10
+	else
+		snde "pop1"
+		kill ownr
+	endi
+endm
+
+scrp 2 21 64745 6
+	inst
+	snde "dsqu"
+	urge shou 1 1 1
+endm
+
+scrp 2 21 64745 9
+	inst
+	snde "pop1"
+	kill ownr
+endm
+
+* Haste
+scrp 1 1 64741 1010
+* Is there a timer event going on?
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Haste; another event in progress"
+		snde "buzz"
+		mesg writ ownr 1029
+	endi
+
+	dbg: outs "WOLFLING TOOL: [START] Haste button pressed"
+* Animate the button
+	doif ov00 eq 1
+		part 10
+		anim [0 1 0 1 0 1 0]
+		over
+	endi
+* Ctrl + shift + click 
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 3
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Haste settings; Haste settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Haste settings"
+			setv ov21 3
+			mesg writ ownr 1049
+		endi
+	endi
+
+* Ctrl + shift + click disables haste
+*	doif keyd 16 eq 1 and keyd 17 eq 1
+*		setv game "engine_SkeletonUpdateDoubleSpeed" 0
+*		rgam
+*		dbg: outs "WOLFLING TOOL: Haste manually ended"
+*		stop
+*	endi
+* Okay, go ahead
+
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Haste; another timed event in progress"
+		snde "buzz"
+		mesg writ ownr 1029
+		stop
+	endi
+
+	doif game "engine_SkeletonUpdateDoubleSpeed" eq 1
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Haste; creatures already hastened!"
+		mesg writ ownr 1029
+		stop
+	endi
+	setv game "engine_SkeletonUpdateDoubleSpeed" 1
+	rgam
+	snde "bep2"
+	dbg: outs "WOLFLING TOOL: Initiating Haste"
+	inst
+	enum 4 0 0
+		sezz "eem caffeinated"
+	next
+	targ ownr
+	doif ov00 eq 0
+		pat: dull 24 "freyla_wolflingtool" 79 45 0 1
+		pat: dull 10 "freyla_wolflingtool" 17 15 60 1
+		part 10
+		anim [0 0 0 1 1 1 255]
+		lock
+	endi
+* Determine Haste duration
+	setv va88 3
+	doif ov73 eq 1
+		subv va88 2
+	elif ov73 eq 3
+		addv va88 3
+	endi
+	part 24
+	setv ov17 1
+	setv ov18 va88
+	frat va88
+	anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 0]
+	over
+	setv ov17 0
+	doif ov00 eq 0
+		pat: kill 24
+		pat: kill 10
+		unlk
+	endi
+	setv game "engine_SkeletonUpdateDoubleSpeed" 0
+	rgam
+	enum 4 1 0
+		sezz "phew..."
+	next
+	targ ownr
+	dbg: outs "WOLFLING TOOL: [END] Haste over"
+
+	mesg writ ownr 1029
+
+endm
+
+* Feast
+scrp 1 1 64741 1011
+	dbg: outs "WOLFLING TOOL: [START] Feast button pressed"
+
+* Animate the button
+	doif ov00 eq 1
+		part 11
+		anim [0 1 0 1 0 1 0]
+		over
+	else
+		pat: dull 11 "freyla_wolflingtool" 19 15 60 1
+		part 11
+		anim [0 1 0 1 0 1 0]
+		over
+		pat: kill 11
+	endi
+
+* Ctrl + shift + click 
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 4
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Feast settings; Feast settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Feast settings"
+			setv ov21 4
+			mesg writ ownr 1049
+		endi
+	endi
+
+	inst
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate feast; no eligible creatures in world!"
+		mesg writ ownr 1029
+		stop
+	endi
+	dbg: outs "WOLFLING TOOL: Initiating feast"
+	snde "bep2"
+	inst
+	doif ov01 eq 0
+		setv va88 10
+	elif ov01 eq 1
+		setv va88 5
+	else
+		setv va88 2
+	endi
+
+	setv va11 ov11
+
+	enum 4 ov10 0
+		setv va01 posx
+		setv va02 post
+		reps va88
+*		produce food
+*			carrot
+			doif va11 eq 0
+				new: simp 2 11 9 "carr" 0 0 563
+				attr 194
+				bhvr 48
+				perm 64
+				accg 1
+				elas 20
+				fric 99
+				pose 6
+
+				emit 8 .5
+				tick 1000
+				setv va09 rand 0 1
+				doif va09 = 0
+					sets name "direction" "left"
+				elif va09 = 1
+					sets name "direction" "right"
+				endi
+				setv ov69 1
+				velo rand -5 5 rand -5 9
+				doif tmvt va01 va02 eq 1
+					mvsf va01 va02
+				else
+					kill targ
+				endi
+*			nut
+				new: simp 2 3 17 "justanut pod" 9 18 51
+				attr 194
+				perm 64
+				bhvr 48
+				pose 1
+				accg 3
+				aero 5
+				fric 99
+				elas 20
+				emit 7 .5
+				tick 200
+				setv ov69 1
+				velo rand -5 5 rand -5 9
+				doif tmvt va01 va02 eq 1
+					mvsf va01 va02
+				else
+					kill targ
+				endi
+*			lemon
+				new: simp 2 8 7 "ds lemon pod" 2 30 355
+				attr 194
+				bhvr 48
+				accg 2
+				perm 64
+				fric 100
+				elas 30
+				aero 2
+				sets name "eaten" "no"
+				emit 6 .5
+				tick 1000
+				setv ov69 1
+				velo rand -5 5 rand -5 9
+				doif tmvt va01 va02 eq 1
+					mvsf va01 va02
+				else
+					kill targ
+				endi
+			elif va11 eq 1
+				new: simp 2 15 64740 "freyla_wolflingmeat" 1 0 420
+				attr 194
+				bhvr 48
+				accg 2
+				perm 64
+				fric 100
+				elas 30
+				aero 2
+				emit 6 0.5
+				tick rand 1000 2000
+				setv ov69 1
+				velo rand -5 5 rand -5 9
+				doif tmvt va01 va02 eq 1
+					mvsf va01 va02
+				else
+					kill targ
+				endi
+			else
+				new: simp 2 10 58 "cackinabox" 8 37 3001
+				attr 194
+				bhvr 48
+				elas 40
+				perm 60
+				accg 1
+				aero 2
+				fric 40
+				tick 5
+				anim [0 1 2 3 4 5 6 7 255]
+				setv ov69 1
+				velo rand -10 10 rand -10 0
+				doif tmvt va01 va02 eq 1
+					mvsf va01 va02
+				else
+					kill targ
+				endi
+			endi
+		repe
+	next
+
+	dbg: outs "WOLFLING TOOL: [END] Feast over"
+	mesg writ ownr 1029
+endm
+
+* Wolfling meat scripts
+scrp 2 15 64740 6
+	snde "dr64"
+endm
+
+scrp 2 15 64740 9
+	kill ownr
+endm
+
+scrp 2 15 64740 12
+	stim writ from 80 1
+	kill ownr
+endm
+
+* Cack scripts in case you don't have 'em!
+scrp 2 10 58 9
+	inst
+	doif ov00 eq 0
+		doif fall eq 0
+*			timer changed to between 5 and 20 seconds		
+			tick rand 100 400
+			anim []
+			setv ov00 1
+		endi
+	elif ov00 eq 1
+*		increase lifetime counter
+		addv ov01 1
+*		if lifetime counter is exceeded, flag death
+		doif ov01 gt 10
+			setv ov00 2
+		endi
+	elif ov00 eq 2
+		kill ownr
+
+	endi
+endm
+
+
+
+scrp 2 10 58 12
+	lock
+	stim writ from 81 1
+	wait 5
+	kill ownr
+endm
+
+
+
+* Relocate
+scrp 1 1 64741 1012
+	dbg: outs "WOLFLING TOOL: [START] Relocate button pressed"
+* Animate the button
+	doif ov00 eq 1
+		part 12
+		anim [0 1 0 1 0 1 0]
+		over
+	else
+		pat: dull 12 "freyla_wolflingtool" 21 15 60 1
+		part 12
+		anim [0 1 0 1 0 1 0]
+		over
+		pat: kill 12
+	endi
+
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 5
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Relocate settings; Relocate settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Relocate settings"
+			setv ov21 5
+			mesg writ ownr 1049
+		endi
+	endi
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Relocate; no eligible creatures in world!"
+		mesg writ ownr 1029
+		stop
+	endi
+
+	lock
+	doif ov02 eq 1 or ov03 eq 1 or ov04 eq 1
+		inst
+		enum 1 1 64748
+			kill targ
+		next
+		targ ownr
+		doif ov02 eq 1
+			gsub c1cg
+		endi
+		targ ownr
+		doif ov03 eq 1
+			gsub c2cg
+		endi
+		targ ownr
+		doif ov04 eq 1
+			gsub c3cg
+		endi
+	endi
+	doif totl 1 1 64748 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Relocate; nowhere to go!"
+		mesg writ ownr 1029
+		stop
+	endi
+	targ ownr
+	snde "bep2"
+	reps ov75
+		dbg: outs "WOLFLING TOOL: Initiating Relocate"
+		gsub relo
+	repe
+	wait 20
+	targ ownr
+	doif ov13 eq 0
+		inst
+		enum 1 1 64748
+			kill targ
+		next
+	else
+		wait 20
+		enum 1 1 64748
+			dpas 0 0 0
+		next
+	endi
+	dbg: outs "WOLFLING TOOL: [END] Relocate over"
+
+	unlk
+	mesg writ ownr 1029
+
+	subr relo
+		rtar 4 ov10 0
+		cmrp posx posy 0
+		accg -0.2
+		wait 30
+		accg 0
+		velo 0 0
+		wait 30
+		seta va00 targ
+		doif va00 ne null
+			rtar 1 1 64748
+			spas targ va00
+		endi
+		targ ownr
+		snde "wrp1"
+		targ va00
+		cmrp posx posy 0
+		wait 10
+		accg 2
+		wait 30
+	retn
+
+	subr c1cg
+		inst
+		doif ov76 eq 1
+			setv va88 7
+		elif ov76 eq 2
+			setv va88 14
+		elif ov76 eq 3
+			setv va88 21
+		endi
+		setv va00 0
+		reps va88
+			new: vhcl 1 1 64748 "freyla_norncage" 22 11 100
+			attr 82
+			perm 75
+			aero 0
+*			anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 1 255]
+			addv va00 1
+			doif va00 eq 1
+				mvsf 4260 10770
+
+			elif va00 eq 2
+				mvsf 8455 10283
+
+			elif va00 eq 3
+				mvsf 2903 10510
+
+			elif va00 eq 4
+				mvsf 6266 10419
+
+			elif va00 eq 5
+				mvsf 5554 10387
+
+			elif va00 eq 6
+				mvsf 3329 10443
+
+			elif va00 eq 7
+				mvsf 1868 10297
+
+			elif va00 eq 8
+				mvsf 5154 10776
+
+			elif va00 eq 9
+				mvsf 7326 10566
+
+			elif va00 eq 10
+				mvsf 2160 10520
+
+			elif va00 eq 11
+				mvsf 5709 10820
+
+			elif va00 eq 12
+				mvsf 6740 10781
+
+			elif va00 eq 13
+				mvsf 3505 10814
+			elif va00 eq 14
+				mvsf 2966 10692
+
+			elif va00 eq 15
+				mvsf 6117 10819
+
+			elif va00 eq 16
+				mvsf 8950 10776
+
+			elif va00 eq 17
+				mvsf 1872 10611
+
+			elif va00 eq 18
+				mvsf 8436 10487
+
+			elif va00 eq 19
+				mvsf 6966 10955
+
+			elif va00 eq 20
+				mvsf 4699 10755
+
+			elif va00 eq 21
+				mvsf 6789 10355
+			else
+			endi
+			tick 20
+
+		repe
+	retn
+
+	subr c2cg
+		inst
+		doif ov76 eq 1
+			setv va88 8
+		elif ov76 eq 2
+			setv va88 16
+		elif ov76 eq 3
+			setv va88 24
+		endi
+		setv va00 0
+		reps va88
+			new: vhcl 1 1 64748 "freyla_norncage" 22 0 100
+			attr 82
+			perm 75
+			aero 0
+*			anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 1 255]
+			addv va00 1
+			doif va00 eq 1
+				mvsf 6909 48326
+
+			elif va00 eq 2
+				mvsf 10276 48050
+
+			elif va00 eq 3
+				mvsf 3792 48091
+
+			elif va00 eq 4
+				mvsf 6023 49720
+
+			elif va00 eq 5
+				mvsf 3930 48724
+
+			elif va00 eq 6
+				mvsf 5140 48713
+
+			elif va00 eq 7
+				mvsf 7473 49342
+
+			elif va00 eq 8
+				mvsf 9331 48115
+
+			elif va00 eq 9
+				mvsf 2210 48957
+
+			elif va00 eq 10
+				mvsf 5081 48077
+
+			elif va00 eq 11
+				mvsf 7320 48028
+
+			elif va00 eq 12
+				mvsf 6312 49009
+
+			elif va00 eq 13
+				mvsf 4301 48429
+			elif va00 eq 14
+				mvsf 4097 49587
+			elif va00 eq 15
+				mvsf 7481 49722
+			elif va00 eq 16
+				mvsf 7267 48652
+			elif va00 eq 17
+				mvsf 6008 48636
+			elif va00 eq 18
+				mvsf 3187 49307
+			elif va00 eq 19
+				mvsf 10350 48478
+			elif va00 eq 20
+				mvsf 7537 48358
+			elif va00 eq 21
+				mvsf 7967 47896
+			elif va00 eq 22
+				mvsf 10041 48770
+			elif va00 eq 23
+				mvsf 5323 49470
+			elif va00 eq 24
+				mvsf 3193 48132
+			else
+			endi
+			tick 20
+		repe
+	retn
+
+	subr c3cg
+		inst
+		doif ov76 eq 1
+			setv va88 8
+		elif ov76 eq 2
+			setv va88 16
+		elif ov76 eq 3
+			setv va88 24
+		endi
+		setv va00 0
+		reps va88
+			new: vhcl 1 1 64748 "freyla_norncage" 22 0 100
+			attr 82
+			perm 75
+*			anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 1 255]
+			addv va00 1
+			doif va00 eq 1
+				mvsf 2629 751
+			elif va00 eq 2
+				mvsf 942 437
+			elif va00 eq 3
+				mvsf 2398 452
+			elif va00 eq 4
+				mvsf 3253 221
+			elif va00 eq 5
+				mvsf 1885 1962
+			elif va00 eq 6
+				mvsf 969 1687
+			elif va00 eq 7
+				mvsf 2290 1679
+			elif va00 eq 8
+				mvsf 1922 2294
+			elif va00 eq 9
+				mvsf 5800 418
+			elif va00 eq 10
+				mvsf 5030 391
+			elif va00 eq 11
+				mvsf 5101 1888
+			elif va00 eq 12
+				mvsf 5804 3862
+			elif va00 eq 13
+				mvsf 3643 3390
+			elif va00 eq 14
+				mvsf 1117 3357
+			elif va00 eq 15
+				mvsf 5371 932
+			elif va00 eq 16
+				mvsf 2481 3173
+			elif va00 eq 17
+				mvsf 1932 697
+			elif va00 eq 18
+				mvsf 448 792
+			elif va00 eq 19
+				mvsf 5719 3329
+			elif va00 eq 20
+				mvsf 6549 190
+			elif va00 eq 21
+				mvsf 207 1892
+			elif va00 eq 22
+				mvsf 6050 4174
+			elif va00 eq 23
+				mvsf 1616 3893
+			elif va00 eq 24
+				mvsf 2482 3680
+			else
+			endi
+			tick 20
+		repe
+	retn
+
+
+
+endm
+
+scrp 1 1 64748 9
+	velo 0 0
+	dpas 0 0 0
+endm
+
+scrp 1 1 64748 1
+	kill ownr
+endm
+
+* Relocate All
+scrp 1 1 64741 1013
+	dbg: outs "WOLFLING TOOL: [START] Relocate All button pressed"
+* Animate the button
+	doif ov00 eq 1
+		part 13
+		anim [0 1 0 1 0 1 0]
+		over
+	else
+		pat: dull 13 "freyla_wolflingtool" 23 15 60 1
+		part 13
+		anim [0 1 0 1 0 1 0]
+		over
+		pat: kill 13
+	endi
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 6
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Relocate All settings; Relocate All settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Relocate All settings"
+			setv ov21 6
+			mesg writ ownr 1049
+		endi
+	endi
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Relocate All; no eligible creatures in world!"
+		mesg writ ownr 1029
+		stop
+	endi
+
+	lock
+	doif ov02 eq 1 or ov03 eq 1 or ov04 eq 1
+		inst
+		enum 1 1 64748
+			kill targ
+		next
+		targ ownr
+		doif ov02 eq 1
+			gsub c1cg
+		endi
+		targ ownr
+		doif ov03 eq 1
+			gsub c2cg
+		endi
+		targ ownr
+		doif ov04 eq 1
+			gsub c3cg
+		endi
+	endi
+	doif totl 1 1 64748 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Relocate; nowhere to go!"
+		mesg writ ownr 1029
+		stop
+	endi
+	snde "bep2"
+	dbg: outs "WOLFLING TOOL: Initiating Relocate All"
+	gsub rela
+	dbg: outs "WOLFLING TOOL: [END] Relocate All over"
+	unlk
+	mesg writ ownr 1029
+
+* Relocate all
+	subr rela
+		inst
+		enum 4 ov10 0
+			seta va00 targ
+			doif va00 ne null
+				rtar 1 1 64748
+				spas targ va00
+			endi
+		next
+		targ ownr
+		snde "wrp1"
+		doif ov13 eq 0
+			wait 20
+			enum 1 1 64748
+				kill targ
+			next
+		else
+			wait 20
+			enum 1 1 64748
+				dpas 0 0 0
+			next
+		endi
+	retn
+
+	subr c1cg
+		inst
+		doif ov76 eq 1
+			setv va88 7
+		elif ov76 eq 2
+			setv va88 14
+		elif ov76 eq 3
+			setv va88 21
+		endi
+		setv va00 0
+		reps va88
+			new: vhcl 1 1 64748 "freyla_norncage" 22 11 100
+			attr 82
+			perm 75
+			aero 0
+*			anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 1 255]
+			addv va00 1
+			doif va00 eq 1
+				mvsf 4260 10770
+
+			elif va00 eq 2
+				mvsf 8455 10283
+
+			elif va00 eq 3
+				mvsf 2903 10510
+
+			elif va00 eq 4
+				mvsf 6266 10419
+
+			elif va00 eq 5
+				mvsf 5554 10387
+
+			elif va00 eq 6
+				mvsf 3329 10443
+
+			elif va00 eq 7
+				mvsf 1868 10297
+
+			elif va00 eq 8
+				mvsf 5154 10776
+
+			elif va00 eq 9
+				mvsf 7326 10566
+
+			elif va00 eq 10
+				mvsf 2160 10520
+
+			elif va00 eq 11
+				mvsf 5709 10820
+
+			elif va00 eq 12
+				mvsf 6740 10781
+
+			elif va00 eq 13
+				mvsf 3505 10814
+			elif va00 eq 14
+				mvsf 2966 10692
+
+			elif va00 eq 15
+				mvsf 6117 10819
+
+			elif va00 eq 16
+				mvsf 8950 10776
+
+			elif va00 eq 17
+				mvsf 1872 10611
+
+			elif va00 eq 18
+				mvsf 8436 10487
+
+			elif va00 eq 19
+				mvsf 6966 10955
+
+			elif va00 eq 20
+				mvsf 4699 10755
+
+			elif va00 eq 21
+				mvsf 6789 10355
+			else
+			endi
+			tick 20
+
+		repe
+	retn
+
+	subr c2cg
+		inst
+		doif ov76 eq 1
+			setv va88 8
+		elif ov76 eq 2
+			setv va88 16
+		elif ov76 eq 3
+			setv va88 24
+		endi
+		setv va00 0
+		reps va88
+			new: vhcl 1 1 64748 "freyla_norncage" 22 0 100
+			attr 82
+			perm 75
+			aero 0
+*			anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 1 255]
+			addv va00 1
+			doif va00 eq 1
+				mvsf 6909 48326
+
+			elif va00 eq 2
+				mvsf 10276 48050
+
+			elif va00 eq 3
+				mvsf 3792 48091
+
+			elif va00 eq 4
+				mvsf 6023 49720
+
+			elif va00 eq 5
+				mvsf 3930 48724
+
+			elif va00 eq 6
+				mvsf 5140 48713
+
+			elif va00 eq 7
+				mvsf 7473 49342
+
+			elif va00 eq 8
+				mvsf 9331 48115
+
+			elif va00 eq 9
+				mvsf 2210 48957
+
+			elif va00 eq 10
+				mvsf 5081 48077
+
+			elif va00 eq 11
+				mvsf 7320 48028
+
+			elif va00 eq 12
+				mvsf 6312 49009
+
+			elif va00 eq 13
+				mvsf 4301 48429
+			elif va00 eq 14
+				mvsf 4097 49587
+			elif va00 eq 15
+				mvsf 7481 49722
+			elif va00 eq 16
+				mvsf 7267 48652
+			elif va00 eq 17
+				mvsf 6008 48636
+			elif va00 eq 18
+				mvsf 3187 49307
+			elif va00 eq 19
+				mvsf 10350 48478
+			elif va00 eq 20
+				mvsf 7537 48358
+			elif va00 eq 21
+				mvsf 7967 47896
+			elif va00 eq 22
+				mvsf 10041 48770
+			elif va00 eq 23
+				mvsf 5323 49470
+			elif va00 eq 24
+				mvsf 3193 48132
+			else
+			endi
+			tick 20
+		repe
+
+	retn
+
+	subr c3cg
+		inst
+		doif ov76 eq 1
+			setv va88 8
+		elif ov76 eq 2
+			setv va88 16
+		elif ov76 eq 3
+			setv va88 24
+		endi
+		setv va00 0
+		reps va88
+			new: vhcl 1 1 64748 "freyla_norncage" 22 0 100
+			attr 82
+			perm 75
+*			anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 1 255]
+			addv va00 1
+			doif va00 eq 1
+				mvsf 2629 751
+			elif va00 eq 2
+				mvsf 942 437
+			elif va00 eq 3
+				mvsf 2398 452
+			elif va00 eq 4
+				mvsf 3253 221
+			elif va00 eq 5
+				mvsf 1885 1962
+			elif va00 eq 6
+				mvsf 969 1687
+			elif va00 eq 7
+				mvsf 2290 1679
+			elif va00 eq 8
+				mvsf 1922 2294
+			elif va00 eq 9
+				mvsf 5800 418
+			elif va00 eq 10
+				mvsf 5030 391
+			elif va00 eq 11
+				mvsf 5101 1888
+			elif va00 eq 12
+				mvsf 5804 3862
+			elif va00 eq 13
+				mvsf 3643 3390
+			elif va00 eq 14
+				mvsf 1117 3357
+			elif va00 eq 15
+				mvsf 5371 932
+			elif va00 eq 16
+				mvsf 2481 3173
+			elif va00 eq 17
+				mvsf 1932 697
+			elif va00 eq 18
+				mvsf 448 792
+			elif va00 eq 19
+				mvsf 5719 3329
+			elif va00 eq 20
+				mvsf 6549 190
+			elif va00 eq 21
+				mvsf 207 1892
+			elif va00 eq 22
+				mvsf 6050 4174
+			elif va00 eq 23
+				mvsf 1616 3893
+			elif va00 eq 24
+				mvsf 2482 3680
+			else
+			endi
+			tick 20
+		repe
+
+	retn
+
+endm
+
+* Plague
+scrp 1 1 64741 1014
+	dbg: outs "WOLFLING TOOL: [START] Plague button pressed"
+* Animate
+	doif ov00 eq 1
+		part 14
+		anim [0 1 0 1 0 1 0]
+		over
+	endi
+
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 7
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Plague settings; Plague settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Plague settings"
+			setv ov21 7
+			mesg writ ownr 1049
+		endi
+	endi
+* Clear
+*	doif keyd 16 eq 1 and keyd 17 eq 1
+*		inst
+*		enum 4 ov10 0
+* Bad Stuff!
+*   Wounded
+*			chem 90 -1
+*			sezz "eem feel better!"
+*		next
+*		dbg: outs "WOLFLING TOOL: Curing all!"
+*		stop
+*	endi
+
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Plague failed; no eligible creatures in world!"
+		mesg writ ownr 1029
+		stop
+	endi
+	snde "bep2"
+	dbg: outs "WOLFLING TOOL: Initiating Plague"
+	lock
+	doif ov14 eq 1
+		setv va50 1
+	elif totl 4 ov10 0 lt 4
+		setv va50 1
+	elif totl 4 ov10 0 lt 10
+		setv va50 3
+	elif totl 4 ov10 0 lt 20
+		setv va50 5
+	else
+		setv va50 10
+	endi
+	reps va50
+		inst
+		targ ownr
+		doif ov01 eq 0
+			setv va88 0.5
+		elif ov01 eq 1
+			setv va88 0.7
+		else
+			setv va88 1
+		endi
+		doif ov14 eq 1
+			enum 4 ov10 0
+				cmrp posx posy 0
+				accg -0.2
+				wait 10
+				inst
+				setv va01 rand 0 20
+				doif va01 eq 20
+					chem 86 va88
+					sezz "eem got antigen 4"
+				else
+					setv va01 rand 0 9
+					doif va01 eq 0
+						chem 73 va88
+						chem 74 va88
+						sezz "eem got allergies"
+					elif va01 eq 1
+						chem 71 va88
+						sezz "eem got sleep toxin"
+					elif va01 eq 2
+						chem 72 va88
+						sezz "eem got fever toxin"
+					elif va01 eq 3
+						chem 80 va88
+						sezz "eem got fear toxin"
+					elif va01 eq 4
+						chem 75 1
+						sezz "eem got wasted"
+					elif va01 eq 5
+						chem 82 va88
+						sezz "eem got antigen 0"
+					elif va01 eq 6
+						chem 83 va88
+						sezz "eem got antigen 1"
+					elif va01 eq 7
+						chem 84 va88
+						sezz "eem got antigen 2"
+					elif va01 eq 8
+						chem 85 va88
+						sezz "eem got antigen 3"
+					else
+						sezz "sike"
+					endi
+				endi
+				wait 10
+				accg 2
+				wait 20
+			next
+		else
+			rtar 4 ov10 0
+			cmrp posx posy 0
+			accg -0.2
+			wait 10
+			inst
+			setv va01 rand 0 20
+			doif va01 eq 20
+				chem 86 va88
+				sezz "eem got antigen 4"
+			else
+				setv va01 rand 0 9
+				doif va01 eq 0
+					chem 73 va88
+					chem 74 va88
+					sezz "eem got allergies"
+				elif va01 eq 1
+					chem 71 va88
+					sezz "eem got sleep toxin"
+				elif va01 eq 2
+					chem 72 va88
+					sezz "eem got fever toxin"
+				elif va01 eq 3
+					chem 80 va88
+					sezz "eem got fear toxin"
+				elif va01 eq 4
+					chem 75 1
+					sezz "eem got wasted"
+				elif va01 eq 5
+					chem 82 va88
+					sezz "eem got antigen 0"
+				elif va01 eq 6
+					chem 83 va88
+					sezz "eem got antigen 1"
+				elif va01 eq 7
+					chem 84 va88
+					sezz "eem got antigen 2"
+				elif va01 eq 8
+					chem 85 va88
+					sezz "eem got antigen 3"
+				else
+					sezz "sike"
+				endi
+			endi
+			wait 10
+			accg 2
+			wait 20
+		endi
+
+	repe
+
+	unlk
+	dbg: outs "WOLFLING TOOL: [END] Plague over"
+	mesg writ ownr 1029
+endm
+
+* Love Time
+scrp 1 1 64741 1015
+
+	dbg: outs "WOLFLING TOOL: [START] Love Time button pressed"
+	doif game "kellogg" eq 1 and keyd 16 ne 1
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Love Time; Kellogg switch is active!"
+		snde "boin"
+		mesg writ ownr 1009
+	endi
+
+	doif ov00 eq 1
+		part 15
+		anim [0 1 0 1 0 1 0]
+		over
+	else
+	endi
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 8
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Love Time settings; Love Time settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Love Time settings"
+			setv ov21 8
+			mesg writ ownr 1049
+		endi
+	endi
+
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate; another event in progress"
+		snde "buzz"
+		mesg writ ownr 1029
+	endi
+
+* Clear
+*	doif keyd 16 eq 1 and keyd 17 eq 1
+*		enum 4 ov10 0
+*			chem 161 -1
+*			urge writ targ -1 2 -1 2
+*		next
+*		targ ownr
+*		stop
+*	endi
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Love Time; no eligible creatures in world!"
+		mesg writ ownr 1029
+		stop
+	endi
+*** LOVE TIME SCRIPT ***
+	dbg: outs "WOLFLING TOOL: Initiating Love Time"
+	setv va15 ov15
+	inst
+	enum 4 ov10 0
+*Sex drive
+		chem 161 1
+		doif va15 eq 1
+*Male-specific chemicals
+			doif spcs eq 1
+				chem 53 1
+*Female Chemicals:
+			elif spcs eq 2
+				chem 46 1
+				chem 48 -1
+			endi
+		endi
+*If it's a norn, tell it to push norn
+		doif gnus eq 1
+			urge writ targ 36 2 1 2
+*Grendels push grendels
+		elif gnus eq 2
+			urge writ targ 37 2 1 2
+*Ettins push ettins
+		elif gnus eq 3
+			urge writ targ 38 2 1 2
+*And geats push geats
+		elif gnus eq 4
+			urge writ targ 39 2 1 2
+		endi
+		sezz "<3!"
+	next
+*** END LOVE TIME SCRIPT ***
+	targ ownr
+	doif ov00 eq 0
+		pat: dull 24 "freyla_wolflingtool" 79 45 0 1
+	endi
+* Determine duration
+	setv va88 3
+	doif ov01 eq 0
+		addv va88 1
+	elif ov01 eq 2
+		subv va88 1
+	endi
+	doif ov78 eq 1
+		subv va88 1
+	elif ov78 eq 3
+		addv va88 1
+	endi
+	part 24
+	setv ov17 1
+	setv ov18 va88
+	frat va88
+	anim [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 0]
+	over
+	lock
+	setv ov17 0
+	inst
+	doif ov00 eq 0
+		pat: kill 24
+	endi
+	enum 4 ov10 0
+		chem 161 -1
+		urge writ targ -1 2 -1 2
+		sezz "phew..."
+	next
+	dbg: outs "WOLFLING TOOL: [END] Love Time over"
+	unlk
+endm
+
+* Heatwave
+scrp 1 1 64741 1016
+	dbg: outs "WOLFLING TOOL: [START] Heatwave button pressed"
+* Animate
+	doif ov00 eq 1
+		part 16
+		anim [0 1 0 1 0 1 0]
+		over
+	endi
+
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 9
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Heatwave settings; Heatwave settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Heatwave settings"
+			setv ov21 9
+			mesg writ ownr 1049
+		endi
+	endi
+
+* Clear
+*	doif keyd 16 eq 1 and keyd 17 eq 1
+*		inst
+*		enum 2 24 64740
+*			prop room targ 2 0.4
+*			kill targ
+*		next
+*		stop
+*	endi
+
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Heatwave; no eligible creatures in world!"
+		mesg writ ownr 1029
+
+		stop
+	endi
+	inst
+	doif ov01 eq 0
+		setv va88 50
+	elif ov01 eq 1
+		setv va88 25
+	else
+		setv va88 0
+	endi
+	snde "bep2"
+	dbg: outs "WOLFLING TOOL: Initiating Heatwave"
+	enum 4 ov10 0
+
+		setv va01 posx
+		setv va02 post
+		new: simp 2 24 64740 "freyla_heatwavecoldsnap" 20 0 563
+		attr 212
+		tick rand 10 20
+		setv ov42 va88
+		perm 64
+		accg 1
+		elas 50
+		fric 99
+		setv va05 rand 0 2
+		doif va05 eq 0
+			anim [0 1 2 3 4 5 6 7 8 9 8 7 6 5 4 3 2 1 255]
+		elif va05 eq 1
+			anim [3 4 5 6 7 8 9 8 7 6 5 4 3 2 1 0 1 2 255]
+		else
+			anim [7 8 9 8 7 6 5 4 3 2 1 0 1 2 3 4 5 6 255]
+		endi
+		velo rand -5 5 rand -5 9
+		doif tmvt va01 va02 eq 1
+			mvsf va01 va02
+		else
+			kill targ
+		endi
+	next
+	dbg: outs "WOLFLING TOOL: [END] Heatwave over"
+	mesg writ ownr 1029
+
+endm
+
+* Fireball scripts
+scrp 2 24 64740 1
+	prop room targ 2 0.4
+	snde "pop1"
+	kill ownr
+endm
+
+scrp 2 24 64740 9
+	addv ov42 1
+	doif ov42 gt 100
+		prop room targ 2 0.4
+		snde "pop1"
+		kill ownr
+	endi
+	setv va00 0.8
+	rtar 1 1 64741
+	doif targ ne null
+		setv va88 ov79
+		targ ownr
+		doif va88 eq 1
+			subv va00 0.2
+		elif va88 eq 3
+			addv va00 0.2
+		endi
+	else
+		targ ownr
+	endi
+	prop room targ 2 va00
+endm
+
+* Cold Snap
+scrp 1 1 64741 1017
+	dbg: outs "WOLFLING TOOL: [START] Cold Snap button pressed"
+* Animate
+	doif ov00 eq 1
+		part 17
+		anim [0 1 0 1 0 1 0]
+		over
+	endi
+
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 10
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Cold Snap settings; Cold Snap settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Cold Snap settings"
+			setv ov21 10
+			mesg writ ownr 1049
+		endi
+	endi
+* Clear
+*	doif keyd 16 eq 1 and keyd 17 eq 1
+*		inst
+*		enum 2 24 64741
+*			prop room targ 2 0.4
+*			kill targ
+*		next
+*		stop
+*	endi
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Cold Snap; no eligible creatures in world!"
+		mesg writ ownr 1029
+		stop
+	endi
+	inst
+	doif ov01 eq 0
+		setv va88 50
+	elif ov01 eq 1
+		setv va88 25
+	else
+		setv va88 0
+	endi
+	dbg: outs "WOLFLING TOOL: Initiating Cold Snap"
+	enum 4 ov10 0
+		setv va01 posx
+		setv va02 post
+		new: simp 2 24 64741 "freyla_heatwavecoldsnap" 20 10 563
+		attr 212
+		tick rand 5 10
+		setv ov42 va88
+		perm 64
+		accg 1
+		elas 50
+		fric 2
+
+		setv va05 rand 0 2
+		doif va05 eq 0
+			anim [0 1 2 3 4 5 6 7 8 9 255]
+		elif va05 eq 1
+			anim [3 4 5 6 7 8 9 0 1 2 255]
+		else
+			anim [7 8 9 0 1 2 3 4 5 6 255]
+		endi
+		velo rand -5 5 rand -5 9
+		doif tmvt va01 va02 eq 1
+			mvsf va01 va02
+		else
+			kill targ
+		endi
+	next
+	dbg: outs "WOLFLING TOOL: [END] Cold Snap over"
+	mesg writ ownr 1029
+
+endm
+
+* Iceball scripts
+scrp 2 24 64741 1
+	prop room targ 2 0.4
+	snde "pop1"
+	kill ownr
+endm
+
+scrp 2 24 64741 6
+	pose rand 0 9
+endm
+
+scrp 2 24 64741 9
+	addv ov42 1
+	doif ov42 gt 100
+		prop room targ 2 0.4
+		snde "pop1"
+		kill ownr
+	endi
+	setv va00 0.1
+	rtar 1 1 64741
+	doif targ ne null
+		setv va88 ov80
+		targ ownr
+		doif va88 eq 1
+			addv va00 0.1
+		elif va88 eq 3
+			subv va00 0.1
+		endi
+	else
+		targ ownr
+	endi
+	prop room targ 2 va00
+
+endm
+
+* Heal
+scrp 1 1 64741 1018
+	dbg: outs "WOLFLING TOOL: [START] Heal button pressed"
+* Animate
+	doif ov00 eq 1
+		part 18
+		anim [0 1 0 1 0 1 0]
+		over
+	endi
+
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 11
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Heal settings; Heal settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Heal settings"
+			setv ov21 11
+			mesg writ ownr 1049
+		endi
+	endi
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Heal; no eligible creatures in world!"
+		mesg writ ownr 1029
+		stop
+	endi
+	dbg: outs "WOLFLING TOOL: Initiating Heal"
+	lock
+	doif ov16 eq 0
+		reps ov81
+			targ ownr
+			rtar 4 ov10 0
+			cmrp posx posy 0
+			gsub heal
+			accg -0.2
+			wait 10
+			sezz "eem feel better!"
+			wait 10
+			accg 0
+			velo 0 0
+			wait 10
+			accg 2
+			wait 20
+			accg 2
+		repe
+	else
+		inst
+		enum 4 ov10 0
+			gsub heal
+			sezz "eem feel better!"
+		next
+	endi
+	dbg: outs "WOLFLING TOOL: [END] Heal over"
+	unlk
+	mesg writ ownr 1029
+
+	subr heal
+* Good Stuff! 
+*   Prostaglandin
+		chem 94 1
+*   Glucose
+		chem 3 1
+*   Air
+		chem 29 1
+*   Vitamin E
+		chem 98 1
+*   Vitamin C 
+		chem 99 1
+* Cures and Antibodies
+*   Medicine one
+		chem 92 1
+*   Anti-oxidant
+		chem 93 1
+*   EDTA
+		chem 95 1
+*   Sodium thiosulphate
+		chem 96 1
+*   Arnica
+		chem 97 1
+*   Antihistamine
+		chem 100 1
+*   Antibodies 0 - 7
+		chem 102 1
+		chem 103 1
+		chem 104 1
+		chem 105 1
+		chem 106 1
+		chem 107 1
+		chem 108 1
+		chem 109 1
+
+* Bad Stuff!
+*   Wounded
+		chem 90 -1
+*   Antigens 0 - 7
+		chem 82 -1
+		chem 83 -1
+		chem 84 -1
+		chem 85 -1
+		chem 86 -1
+		chem 87 -1
+		chem 88 -1
+		chem 89 -1
+*   Heavy Metals
+		chem 66 -1
+*   Cyanide
+		chem 67 -1
+*   Belladonna
+		chem 68 -1
+*   Geddonase
+		chem 69 -1
+*   Glycotoxin
+		chem 70 -1
+*   Sleep Toxin
+		chem 71 -1
+*   Fever Toxin
+		chem 72 -1
+*   Histamine A
+		chem 73 -1
+*   Histamine B
+		chem 74 -1
+*   Alcohol
+		chem 75 -1
+*   ATP Decoupler
+		chem 78 -1
+*   Carbon Monoxide
+		chem 79 -1
+*   Fear Toxin
+		chem 80 -1
+*   Muscle Toxin
+		chem 81 -1
+*   Lactate
+		chem 1 -1
+*   Lactic Acid
+		chem 61 -1
+	retn
+endm
+
+* Stingers
+scrp 1 1 64741 1019
+	dbg: outs "WOLFLING TOOL: Stinger button pressed"
+* Animate
+	doif ov00 eq 1
+		part 19
+		anim [0 1 0 1 0 1 0]
+		over
+	endi
+
+	doif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1
+		doif ov20 ne 0 and ov21 eq 12
+			dbg: outs "WOLFLING TOOL: [END] Failed to open Stinger settings; Stinger settings already open!"
+			snde "buzz"
+			mesg writ ownr 1029
+
+			stop
+		else
+			dbg: outs "WOLFLING TOOL: [END] Opening Stinger settings"
+			setv ov21 12
+			mesg writ ownr 1049
+		endi
+	endi
+
+	doif totl 4 ov10 0 eq 0
+		snde "buzz"
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate Stingers; no eligible creatures in world!"
+		mesg writ ownr 1029
+
+		stop
+	endi
+	inst
+	doif ov01 eq 0
+		setv va88 100
+	elif ov01 eq 1
+		setv va88 500
+	else
+		setv va88 1000
+	endi
+	setv va89 ov82
+	dbg: outs "WOLFLING TOOL: Initiating Stingers"
+	enum 4 ov10 0
+
+		seta va16 targ
+		setv va01 posx
+		setv va02 post
+		reps va89
+			new: simp 2 14 8 "rotorfly" 65 0 641
+			sets name "Cast" "Worker"
+			attr 198
+			bhvr 59
+			perm 45
+			accg .01
+			elas 10
+			fric 99
+			setv ov50 1
+			aero 1
+** Set the Nest's Targ to null
+			seta ov79 null
+** Set the Queen Targ to null
+			seta ov72 null
+			setv ov00 3
+			sets name "Role" "The Others"
+			setv va10 rand 1 2
+			doif va10 = 1
+				setv ov10 -1
+				setv ov80 -1
+				anim [0 1 2 3 4 5 6 7 255]
+			elif va10 = 2
+				setv ov10 1
+				setv ov80 1
+				anim [8 9 10 11 12 13 14 15 255]
+			endi
+** Track who you're spawning for
+			seta ov16 va16
+** ov70 tracks how long the stinger has been annoyed for
+			setv ov70 0
+** ov71 is the annoyance memory
+			setv ov71 va88
+			tick 15
+** move
+			velo rand -2 2 rand -1 -3
+			doif tmvt va01 va02 eq 1
+				mvsf va01 va02
+			else
+				kill targ
+			endi
+		repe
+
+	next
+	dbg: outs "WOLFLING TOOL: Stingers over"
+	mesg writ ownr 1029
+
+endm
+
+* Norn toggle
+scrp 1 1 64741 1020
+
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate; another event in progress"
+		snde "excl"
+		mesg writ ownr 1029
+	endi
+	doif ov10 eq 1
+		setv ov10 0
+		part 20
+		pose 0
+	else
+		setv ov10 1
+		part 20
+		pose 1
+		part 21
+		pose 0
+		part 22
+		pose 0
+		part 23
+		pose 0
+	endi
+endm
+
+* Ettin toggle
+scrp 1 1 64741 1021
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate; another event in progress"
+		snde "excl"
+		mesg writ ownr 1029
+	endi
+	doif ov10 eq 3
+		setv ov10 0
+		part 21
+		pose 0
+	else
+		setv ov10 3
+		part 20
+		pose 0
+		part 21
+		pose 1
+		part 22
+		pose 0
+		part 23
+		pose 0
+	endi
+endm
+
+* Grendel toggle
+scrp 1 1 64741 1022
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate; another event in progress"
+		snde "excl"
+		mesg writ ownr 1029
+	endi
+	doif ov10 eq 2
+		setv ov10 0
+		part 22
+		pose 0
+	else
+		setv ov10 2
+		part 20
+		pose 0
+		part 21
+		pose 0
+		part 22
+		pose 1
+		part 23
+		pose 0
+	endi
+endm
+
+* Geat toggle
+scrp 1 1 64741 1023
+	doif ov17 ne 0
+		dbg: outs "WOLFLING TOOL: [END] Failed to initiate; another event in progress"
+		snde "excl"
+		mesg writ ownr 1029
+	endi
+	doif ov10 eq 4
+		setv ov10 0
+		part 23
+		pose 0
+	else
+		setv ov10 4
+		part 20
+		pose 0
+		part 21
+		pose 0
+		part 22
+		pose 0
+		part 23
+		pose 1
+	endi
+endm
+
+scrp 1 1 64741 1025
+
+	mesg writ ownr 1029
+
+endm
+
+* Unpause script
+scrp 1 1 64741 1026
+	part 26
+	anim [0 1 0 1 0 1 0]
+	over
+	part 27
+	pose 0
+* Unpause timer
+	doif ov17 eq 2
+		setv ov17 1
+		doif wpau eq 0 and ov19 eq 1
+			inst
+			enum 4 ov10 0
+				paus 0
+			next
+		endi
+		setv ov19 0
+		part 24
+		loop
+			setv va42 pose
+			addv va42 1
+			pose va42
+			wait ov18
+		untl va42 eq 50
+		pose 0
+		setv game "engine_SkeletonUpdateDoubleSpeed" 0
+		rgam
+		inst
+		enum 4 ov10 0
+			urge writ targ -1 2 -1 2
+		next
+		inst
+		enum 3 4 0
+			tick 50
+		next
+	elif wpau eq 0 and ov19 eq 1
+		setv ov19 0
+		inst
+		enum 4 ov10 0
+			paus 0
+		next
+		inst
+		enum 3 4 0
+			tick 50
+		next
+	else
+		snde "buzz"
+	endi
+
+endm
+
+* Pause script
+scrp 1 1 64741 1027
+	part 27
+	doif ov19 eq 1
+		snde "buzz"
+		stop
+	endi
+	anim [0 1 0 1 0 1]
+	over
+* Pause timer
+	doif ov17 eq 1
+		setv ov17 2
+		part 24
+		pose pose
+	endi
+* Pause norns
+	inst
+	enum 4 ov10 0
+		paus 1
+	next
+* Pause eggs
+	inst
+	enum 3 4 0
+		tick 0
+	next
+	setv ov19 1
+endm
+
+* Stop script
+scrp 1 1 64741 1028
+	part 28
+	anim [0 1 0 1 0 1 0]
+	over
+	part 27
+	pose 0
+* Stop timer
+	doif ov17 ne 0
+		setv ov17 0
+		part 24
+		pose 0
+		setv game "engine_SkeletonUpdateDoubleSpeed" 0
+		rgam
+		inst
+		enum 4 ov10 0
+			urge writ targ -1 2 -1 2
+		next
+		doif wpau eq 0 and ov19 eq 1
+			inst
+			enum 4 ov10 0
+				paus 0
+			next
+		endi
+		inst
+		enum 3 4 0
+			tick 50
+		next
+	elif wpau eq 0 and ov19 eq 1
+		inst
+		enum 4 ov10 0
+			paus 0
+		next
+		inst
+		enum 3 4 0
+			tick 50
+		next
+	else
+		snde "buzz"
+	endi
+	setv ov17 0
+	setv ov19 0
+endm
+
+* Don't interrupt me!!!
+scrp 1 1 64741 1029
+* Resume any timers
+	doif ov17 ne 0 and ov17 ne 2
+		part 24
+		loop
+			setv va42 pose
+			doif va42 eq 50 or va42 eq 49 or va42 eq 0
+				pose 0
+				setv game "engine_SkeletonUpdateDoubleSpeed" 0
+				rgam
+				inst
+				enum 4 ov10 0
+					urge writ targ -1 2 -1 2
+					sezz "phew..."
+				next
+
+				setv ov17 0
+				stop
+			endi
+			addv va42 1
+			pose va42
+			wait ov18
+		untl va42 eq 50
+		pose 0
+		setv game "engine_SkeletonUpdateDoubleSpeed" 0
+		rgam
+		inst
+		enum 4 ov10 0
+			urge writ targ -1 2 -1 2
+			sezz "phew..."
+		next
+		setv ov17 0
+		stop
+	endi
+endm
+
+* Small panel opener
+scrp 1 1 64741 1049
+	doif ov20 eq 0
+		snde "yes_"
+		setv ov20 1
+		pat: dull 49 "freyla_wolflingtool3" 0 411 22 -1
+		part 49
+		anim [0 1 2 3 4 5 6 7 8 9 10 9 10 9 10]
+		over
+		pat: butt 50 "freyla_wolflingtool3" 11 2 514 54 1 [] 1050 1
+		part 50
+		anim [0 1 0 1 0]
+* Toggle button settings
+		pat: butt 51 "freyla_wolflingtool3" 13 13 438 80 1 [] 1100 1
+		part 51
+		doif ov21 eq 0
+			pose 0
+* WAR TIME SETTINGS
+		elif ov21 eq 1
+			doif ov51 eq 1
+				pose 1
+			else
+				pose 0
+			endi
+
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+			doif ov51 eq 1
+				doif ov71 eq 0
+					pose 1
+				elif ov71 eq 1
+					pose 2
+				elif ov71 eq 2
+					pose 3
+				elif ov71 eq 3
+					pose 4
+				endi
+			endi
+
+			part 51
+* PLAY TIME SETTINGS
+		elif ov21 eq 2
+			doif ov52 eq 1
+				pose 2
+			else
+				pose 0
+			endi
+
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+			doif ov72 eq 0
+				pose 5
+			elif ov72 eq 1
+				pose 6
+			elif ov72 eq 2
+				pose 7
+			elif ov72 eq 3
+				pose 8
+			endi
+
+			pat: butt 53 "freyla_wolflingtool3" 67 11 470 81 1 [] 1102 1
+			part 53
+			doif ov12 eq 0
+				pose 1
+			else
+				pose 2
+			endi
+			part 51
+* HASTE SETTINGS
+		elif ov21 eq 3
+			doif ov53 eq 1
+				pose 3
+			else
+				pose 0
+			endi
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+
+			doif ov73 eq 0
+				pose 9
+			elif ov73 eq 1
+				pose 10
+			elif ov73 eq 2
+				pose 11
+			elif ov73 eq 3
+				pose 12
+			endi
+
+			part 51
+* FEAST SETTINGS
+		elif ov21 eq 4
+			doif ov54 eq 1
+				pose 4
+			else
+				pose 0
+			endi
+
+			pat: butt 54 "freyla_wolflingtool3" 78 2 446 111 1 [] 1103 1
+			part 54
+			doif ov11 eq 0
+				pose 1
+			else
+				pose 0
+			endi
+			pat: butt 55 "freyla_wolflingtool3" 80 2 474 111 1 [] 1104 1
+			part 55
+			doif ov11 eq 1
+				pose 1
+			else
+				pose 0
+			endi
+			pat: butt 56 "freyla_wolflingtool3" 82 2 503 111 1 [] 1105 1
+			part 56
+			doif ov11 eq 2
+				pose 1
+			else
+				pose 0
+			endi
+			part 51
+* RELO SETTINGS
+		elif ov21 eq 5
+			doif ov55 eq 1
+				pose 5
+			else
+				pose 0
+			endi
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+			doif ov75 eq 0
+				pose 13
+			elif ov75 eq 1
+				pose 14
+			elif ov75 eq 2
+				pose 15
+			elif ov75 eq 3
+				pose 16
+			endi
+
+			part 51
+* RELA SETTINGS
+		elif ov21 eq 6
+			doif ov56 eq 1
+				pose 6
+			else
+				pose 0
+			endi
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+			doif ov76 eq 0
+				pose 17
+			elif ov76 eq 1
+				pose 18
+			elif ov76 eq 2
+				pose 19
+			elif ov76 eq 3
+				pose 20
+			endi
+			pat: butt 53 "freyla_wolflingtool3" 67 11 470 81 1 [] 1102 1
+			part 53
+			doif ov13 eq 0
+				pose 3
+			elif ov13 eq 1 and ov23 eq 1
+				pose 4
+			else
+				pose 6
+			endi
+			part 51
+* PLAGUE SETTINGS
+		elif ov21 eq 7
+			doif ov57 eq 1
+				pose 7
+			else
+				pose 0
+			endi
+
+			pat: butt 53 "freyla_wolflingtool3" 67 11 470 81 1 [] 1102 1
+			part 53
+			doif ov14 eq 0
+				pose 5
+			else
+				pose 6
+			endi
+			part 51
+* LOVE TIME SETTINGS
+		elif ov21 eq 8
+			doif ov58 eq 1
+				pose 8
+			else
+				pose 0
+			endi
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+
+			doif ov78 eq 0
+				pose 21
+			elif ov78 eq 1
+				pose 22
+			elif ov78 eq 2
+				pose 23
+			elif ov78 eq 3
+				pose 24
+			endi
+			pat: butt 53 "freyla_wolflingtool3" 67 11 470 81 1 [] 1102 1
+			part 53
+			doif ov15 eq 0
+				pose 7
+			else
+				pose 8
+			endi
+			part 51
+* HEATWAVE SETTINGS
+		elif ov21 eq 9
+			doif ov59 eq 1
+				pose 9
+			else
+				pose 0
+			endi
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+
+			doif ov79 eq 0
+				pose 25
+			elif ov79 eq 1
+				pose 26
+			elif ov79 eq 2
+				pose 27
+			elif ov79 eq 3
+				pose 28
+			endi
+
+			part 51
+* COLD SNAP SETTINGS
+		elif ov21 eq 10
+			doif ov60 eq 1
+				pose 10
+			else
+				pose 0
+			endi
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+
+			doif ov80 eq 0
+				pose 29
+			elif ov80 eq 1
+				pose 30
+			elif ov80 eq 2
+				pose 31
+			elif ov80 eq 3
+				pose 32
+			endi
+
+			part 51
+* HEAL SETTINGS
+		elif ov21 eq 11
+			doif ov61 eq 1
+				pose 11
+			else
+				pose 0
+			endi
+			pat: butt 52 "freyla_wolflingtool3" 26 40 452 114 1 [] 1101 1
+			part 52
+
+			doif ov81 eq 0
+				pose 33
+			elif ov81 eq 1
+				pose 34
+			elif ov81 eq 2
+				pose 35
+			elif ov81 eq 3
+				pose 36
+			endi
+			pat: butt 53 "freyla_wolflingtool3" 67 11 470 81 1 [] 1102 1
+			part 53
+			doif ov16 eq 0
+				pose 9
+			else
+				pose 10
+			endi
+			part 51
+* STINGER SETTINGS
+		elif ov21 eq 12
+			doif ov62 eq 1
+				pose 12
+			else
+				pose 0
+			endi
+			pat: butt 52 "freyla_wolflingtool3" 26 41 452 114 1 [] 1101 1
+			part 52
+
+			doif ov82 eq 0
+				pose 37
+			elif ov82 eq 1
+				pose 38
+			elif ov82 eq 2
+				pose 39
+			elif ov82 eq 3
+				pose 40
+			endi
+
+			part 51
+		else
+		endi
+	else
+		inst
+		part 49
+		pose 9
+		pat: kill 50
+		pat: kill 51
+		pat: kill 52
+		pat: kill 53
+		pat: kill 54
+		pat: kill 55
+		pat: kill 56
+		part 49
+		anim [9 8 7 6 5 4 3 2 1 0]
+		snde "no__"
+		over
+		pat: kill 49
+		setv ov20 0
+		mesg writ ownr 1049
+	endi
+	mesg writ ownr 1029
+endm
+
+* Small panel close
+scrp 1 1 64741 1050
+	part 50
+	anim [0 1 0 1 0 1 0]
+	over
+	part 49
+	pose 9
+	pat: kill 50
+	pat: kill 51
+	pat: kill 52
+	pat: kill 53
+	pat: kill 54
+	pat: kill 55
+	pat: kill 56
+	part 49
+	anim [9 8 7 6 5 4 3 2 1 0]
+	snde "no__"
+	over
+	pat: kill 49
+	setv ov20 0
+	mesg writ ownr 1029
+
+endm
+
+* Event availability toggler
+scrp 1 1 64741 1100
+	doif keyd 16 eq 1 and keyd 17 eq 1
+		dbg: outs "WOLFLING TOOL: [START] Alternative function engaged!"
+		doif ov21 eq 1
+			inst
+			enum 4 ov10 0
+				urge writ targ -1 2 -1 2
+				chem 90 -1
+				chem 148 -1
+			next
+			setv game "engine_SkeletonUpdateDoubleSpeed" 0
+			rgam
+			targ ownr
+			doif ov17 eq 1
+				part 24
+				pose 0
+				setv ov17 0
+			endi
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Ending all timed events, removing wounded/pain"
+			stop
+		elif ov21 eq 2
+			inst
+			enum 2 21 64745
+				kill targ
+			next
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Cleaning up toys"
+			mesg writ ownr 1029
+			stop
+		elif ov21 eq 3
+			enum 4 ov10 0
+				urge writ targ -1 2 -1 2
+			next
+			setv game "engine_SkeletonUpdateDoubleSpeed" 0
+			rgam
+			targ ownr
+			doif ov17 eq 1
+				part 24
+				pose 0
+				setv ov17 0
+			endi
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Ending all timed events"
+			stop
+		elif ov21 eq 4
+			inst
+			enum 2 11 9
+				doif ov69 eq 1
+					kill targ
+				endi
+			next
+			inst
+			enum 2 3 17
+				doif ov69 eq 1
+					kill targ
+				endi
+			next
+			inst
+			enum 2 8 7
+				doif ov69 eq 1
+					kill targ
+				endi
+			next
+			inst
+			enum 2 15 64740
+				kill targ
+			next
+			inst
+			enum 2 10 58
+				doif ov69 eq 1
+					kill targ
+				endi
+			next
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Cleaning up food"
+			mesg writ ownr 1029
+			stop
+		elif ov21 eq 5
+			rtar 4 ov10 0
+			doif movs eq 0 and tmvf cmrx cmry eq 1
+				mvsf cmrx cmry
+				dbg: outs "WOLFLING TOOL: [END] Bringing one to viewer"
+				mesg writ ownr 1029
+				stop
+			else
+				snde "buzz"
+				mesg writ ownr 1029
+				stop
+			endi
+		elif ov21 eq 6
+			inst
+			enum 4 ov10 0
+				doif movs eq 0 and tmvf cmrx cmry eq 1
+					mvsf cmrx cmry
+				else
+					snde "buzz"
+				endi
+			next
+			dbg: outs "WOLFLING TOOL: [END] Calling all to viewer"
+			mesg writ ownr 1029
+			stop
+		elif ov21 eq 7
+			inst
+			enum 4 ov10 0
+*   Antigens 0 - 7
+				chem 82 -1
+				chem 83 -1
+				chem 84 -1
+				chem 85 -1
+				chem 86 -1
+				chem 87 -1
+				chem 88 -1
+				chem 89 -1
+*   Heavy Metals
+				chem 66 -1
+*   Cyanide
+				chem 67 -1
+*   Belladonna
+				chem 68 -1
+*   Geddonase
+				chem 69 -1
+*   Glycotoxin
+				chem 70 -1
+*   Sleep Toxin
+				chem 71 -1
+*   Fever Toxin
+				chem 72 -1
+*   Histamine A
+				chem 73 -1
+*   Histamine B
+				chem 74 -1
+*   Alcohol
+				chem 75 -1
+*   ATP Decoupler
+				chem 78 -1
+*   Carbon Monoxide
+				chem 79 -1
+*   Fear Toxin
+				chem 80 -1
+*   Muscle Toxin
+				chem 81 -1
+*   Lactate
+				chem 1 -1
+*   Lactic Acid
+				chem 61 -1
+
+			next
+			inst
+			enum 2 32 23
+				seta va00 targ
+				doif ov00 ne null
+					targ ov00
+					doif fmly eq 4
+						kill va00
+					endi
+				endi
+			next
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Cleaning up pathogens"
+			mesg writ ownr 1029
+			stop
+
+		elif ov21 eq 8
+			inst
+			enum 4 ov10 0
+				urge writ targ -1 2 -1 2
+			next
+			setv game "engine_SkeletonUpdateDoubleSpeed" 0
+			rgam
+			targ ownr
+			doif ov17 eq 1
+				part 24
+				pose 0
+				setv ov17 0
+			endi
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Ending all timed events"
+			stop
+		elif ov21 eq 9
+			inst
+			enum 2 24 64740
+				kill targ
+			next
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Cleaning up fireballs"
+			stop
+
+		elif ov21 eq 10
+			inst
+			enum 2 24 64741
+				kill targ
+			next
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Cleaning up iceballs"
+			stop
+		elif ov21 eq 11
+			inst
+			enum 4 ov10 0
+				chem 221 1
+				chem 90 -1
+				chem 94 1
+				chem 35 1
+				chem 9 -1
+				chem 9 0.5
+				chem 4 0.5
+			next
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Clear!"
+			stop
+
+		elif ov21 eq 12
+			inst
+			enum 2 14 8
+				doif ov50 eq 1
+					kill targ
+				endi
+			next
+			snde "wrp1"
+			dbg: outs "WOLFLING TOOL: [END] Cleaning up stingers"
+			stop
+
+		else
+			snde "excl"
+			dbg: outs "WOLFLING TOOL: [END] No alternative function found"
+			mesg writ ownr 1029
+			stop
+		endi
+	endi
+	part 51
+
+	doif pose ne 0
+		snde "no__"
+		pose 0
+		doif ov21 eq 1
+			setv ov51 0
+
+		elif ov21 eq 2
+
+			setv ov52 0
+
+		elif ov21 eq 3
+			setv ov53 0
+
+		elif ov21 eq 4
+			setv ov54 0
+		elif ov21 eq 5
+			setv ov55 0
+
+		elif ov21 eq 6
+			setv ov56 0
+
+		elif ov21 eq 7
+			setv ov57 0
+
+		elif ov21 eq 8
+			setv ov58 0
+
+		elif ov21 eq 9
+			setv ov59 0
+
+		elif ov21 eq 10
+			setv ov60 0
+
+		elif ov21 eq 11
+			setv ov61 0
+
+		elif ov21 eq 12
+			setv ov62 0
+
+		endi
+	else
+		snde "bep2"
+		pose ov21
+		doif ov21 eq 1
+			setv ov51 1
+		elif ov21 eq 2
+			setv ov52 1
+		elif ov21 eq 3
+			setv ov53 1
+		elif ov21 eq 4
+			setv ov54 1
+		elif ov21 eq 5
+			setv ov55 1
+		elif ov21 eq 6
+			setv ov56 1
+		elif ov21 eq 7
+			setv ov57 1
+		elif ov21 eq 8
+			setv ov58 1
+		elif ov21 eq 9
+			setv ov59 1
+		elif ov21 eq 10
+			setv ov60 1
+		elif ov21 eq 11
+			setv ov61 1
+		elif ov21 eq 12
+			setv ov62 1
+		endi
+	endi
+	mesg writ ownr 1029
+
+endm
+
+* Custom slider adjuster
+scrp 1 1 64741 1101
+	snde "bep2"
+	doif ov21 eq 0
+		stop
+	elif ov21 eq 1
+		doif ov71 eq 3
+			setv ov71 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov71 1
+		endi
+	elif ov21 eq 2
+		doif ov72 eq 3
+			setv ov72 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov72 1
+		endi
+	elif ov21 eq 3
+		doif ov73 eq 3
+			setv ov73 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov73 1
+		endi
+	elif ov21 eq 4
+		snde "buzz"
+
+	elif ov21 eq 5
+		doif ov75 eq 3
+			setv ov75 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov75 1
+		endi
+	elif ov21 eq 6
+		doif ov76 eq 3
+			setv ov76 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov76 1
+		endi
+	elif ov21 eq 7
+		snde "buzz"
+	elif ov21 eq 8
+		doif ov78 eq 3
+			setv ov78 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov78 1
+		endi
+	elif ov21 eq 9
+		doif ov79 eq 3
+			setv ov79 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov79 1
+		endi
+	elif ov21 eq 10
+		doif ov80 eq 3
+			setv ov80 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov80 1
+		endi
+	elif ov21 eq 11
+		doif ov81 eq 3
+			setv ov81 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov81 1
+		endi
+	elif ov21 eq 12
+		doif ov82 eq 3
+			setv ov82 1
+			part 52
+			setv va00 pose
+			subv va00 2
+			pose va00
+		else
+			part 52
+			setv va00 pose
+			addv va00 1
+			pose va00
+			addv ov82 1
+		endi
+	endi
+	mesg writ ownr 1029
+
+endm
+
+* Extra toggle adjuster
+scrp 1 1 64741 1102
+	doif ov21 eq 2
+		doif ov12 eq 0
+			setv ov12 1
+			part 53
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			setv ov12 0
+			part 53
+			setv va00 pose
+			subv va00 1
+			pose va00
+		endi
+	elif ov21 eq 6
+* rela
+* Turn on custom relocation and unlock locations
+		doif ov13 eq 0
+			setv ov13 1
+			setv ov23 0
+* Turn off default locations if they're on
+			doif ov02 eq 1 or ov03 eq 1 or ov04 eq 1
+				setv ov02 0
+				setv ov03 0
+				setv ov04 0
+				part 4
+				pose 0
+				part 5
+				pose 0
+				part 6
+				pose 0
+				snde "snap"
+			endi
+* Reveal any existing custom relocation targets if they're hidden (there shouldn't be, but just in case)
+			enum 1 1 64748
+				anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 255]
+			next
+			part 53
+			pose 6
+* Create a new custom relocation target
+		elif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1 and ov23 eq 0
+			targ pntr
+			setv va27 posx
+			setv va28 posy
+			new: vhcl 1 1 64748 "freyla_norncage" 11 0 100
+			attr 86
+			perm 75
+			anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 255]
+			mvsf va27 va28
+			targ ownr
+* Lock custom location targets and make them invisible
+		elif ov13 eq 1 and ov23 eq 0
+			part 53
+			pose 4
+			setv ov23 1
+			inst
+			enum 1 1 64748
+				doif targ ne null
+					part 0
+					dpas 0 0 0
+					pose 0
+				endi
+			next
+			targ ownr
+* Reveal and unlock custom locations
+		elif keyd 16 eq 1 and keyd 17 eq 1 and ov00 eq 1 and ov23 eq 1
+			inst
+			enum 1 1 64748
+				anim [1 2 3 4 5 6 7 8 9 10 9 8 7 6 5 4 3 2 255]
+			next
+			part 53
+			pose 6
+			setv ov23 0
+* Disable custom locations
+		else
+			enum 1 1 64748
+				kill targ
+			next
+
+			setv ov13 0
+			setv ov23 0
+			part 53
+			pose 3
+		endi
+* PLAGUE SETTINGS
+	elif ov21 eq 7
+		doif ov14 eq 0
+			setv ov14 1
+			part 53
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			setv ov14 0
+			part 53
+			setv va00 pose
+			subv va00 1
+			pose va00
+		endi
+	elif ov21 eq 8
+		doif ov15 eq 0
+			setv ov15 1
+			part 53
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			setv ov15 0
+			part 53
+			setv va00 pose
+			subv va00 1
+			pose va00
+		endi
+	elif ov21 eq 11
+		doif ov16 eq 0
+			setv ov16 1
+			part 53
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			setv ov16 0
+			part 53
+			setv va00 pose
+			subv va00 1
+			pose va00
+		endi
+	endi
+	mesg writ ownr 1029
+endm
+
+scrp 1 1 64741 1103
+	doif keyd 16 eq 1 and keyd 17 eq 1
+		inst
+		enum 2 11 9
+			doif ov69 eq 1
+				kill targ
+			endi
+		next
+		inst
+		enum 2 3 17
+			doif ov69 eq 1
+				kill targ
+			endi
+		next
+		inst
+		enum 2 8 7
+			doif ov69 eq 1
+				kill targ
+			endi
+		next
+
+		snde "wrp1"
+		mesg writ ownr 1029
+		stop
+	endi
+	doif ov11 eq 0
+		snde "excl"
+	else
+		setv ov11 0
+		snde "bep2"
+		part 54
+		pose 1
+		part 55
+		pose 0
+		part 56
+		pose 0
+	endi
+	doif ov17 ne 0
+		mesg writ ownr 1029
+	endi
+endm
+
+scrp 1 1 64741 1104
+	doif keyd 16 eq 1 and keyd 17 eq 1
+		inst
+		enum 2 15 64740
+			kill targ
+		next
+		snde "wrp1"
+		mesg writ ownr 1029
+		stop
+	endi
+	doif ov11 eq 1
+		snde "excl"
+	else
+		setv ov11 1
+		snde "bep2"
+		part 54
+		pose 0
+		part 55
+		pose 1
+		part 56
+		pose 0
+	endi
+	doif ov17 ne 0
+		mesg writ ownr 1029
+	endi
+endm
+
+scrp 1 1 64741 1105
+	doif keyd 16 eq 1 and keyd 17 eq 1
+		inst
+		enum 2 10 58
+			doif ov69 eq 1
+				kill targ
+			endi
+		next
+		snde "wrp1"
+		mesg writ ownr 1029
+		stop
+	endi
+	doif ov11 eq 2
+		snde "excl"
+	else
+		setv ov11 2
+		snde "bep2"
+		part 54
+		pose 0
+		part 55
+		pose 0
+		part 56
+		pose 1
+	endi
+	doif ov17 ne 0
+		mesg writ ownr 1029
+	endi
+endm
+
+rscr
+enum 4 0 0
+	accg 2
+	doif wpau eq 0
+		paus 0
+	endi
+	urge writ targ -1 2 -1 2
+next
+setv game "engine_SkeletonUpdateDoubleSpeed" 0
+rgam
+
+enum 1 1 64741
+	kill targ
+next
+enum 2 21 64745
+	kill targ
+next
+enum 2 24 64740
+	kill targ
+next
+enum 2 24 64741
+	kill targ
+next
+enum 1 1 155
+	doif ov42 eq 1
+		kill targ
+	endi
+next
+enum 2 10 58
+	doif ov69 eq 1
+		kill targ
+	endi
+next
+enum 2 14 8
+	doif ov50 eq 1
+		kill targ
+	endi
+next
+enum 2 15 64740
+	kill targ
+next
+
+enum 1 1 64748
+	kill targ
+next

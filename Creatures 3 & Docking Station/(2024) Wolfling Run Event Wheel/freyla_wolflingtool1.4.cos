@@ -439,50 +439,62 @@ scrp 1 1 64741 1003
 * See which event we picked and trigger it
 		doif va01 le va51
 			dbg: outs "WOLFLING TOOL: [END] War time randomly selected"
+			wait 1
 			mesg writ ownr 1008
 
 		elif va01 le va52
 			dbg: outs "WOLFLING TOOL: [END] Play time randomly selected"
+			wait 1
 			mesg writ ownr 1009
 
 		elif va01 le va53
 			dbg: outs "WOLFLING TOOL: [END] Haste randomly selected"
+			wait 1
 			mesg writ ownr 1010
 
 		elif va01 le va54
 			dbg: outs "WOLFLING TOOL: [END] Feast randomly selected"
+			wait 1
 			mesg writ ownr 1011
 
 		elif va01 le va55
 			dbg: outs "WOLFLING TOOL: [END] Relocate randomly selected"
+			wait 1
 			mesg writ ownr 1012
 
 		elif va01 le va56
 			dbg: outs "WOLFLING TOOL: [END] Relocate all randomly selected"
+			wait 1
 			mesg writ ownr 1013
 
 		elif va01 le va57
 			dbg: outs "WOLFLING TOOL: [END] Plague randomly selected"
+			wait 1
 			mesg writ ownr 1014
 
 		elif va01 le va58
 			dbg: outs "WOLFLING TOOL: [END] Love time randomly selected"
+			wait 1
 			mesg writ ownr 1015
 
 		elif va01 le va59
 			dbg: outs "WOLFLING TOOL: [END] Heatwave randomly selected"
+			wait 1
 			mesg writ ownr 1016
 
 		elif va01 le va60
 			dbg: outs "WOLFLING TOOL: [END] Cold snap randomly selected"
+			wait 1
 			mesg writ ownr 1017
 
 		elif va01 le va61
 			dbg: outs "WOLFLING TOOL: [END] Heal randomly selected"
+			wait 1
 			mesg writ ownr 1018
 
 		elif va01 le va62
 			dbg: outs "WOLFLING TOOL: [END] Stingers randomly selected"
+			wait 1
 			mesg writ ownr 1019
 
 		endi
@@ -1017,6 +1029,7 @@ scrp 1 1 64741 1011
 	dbg: outs "WOLFLING TOOL: Initiating feast"
 	snde "bep2"
 	inst
+* Set quantity based on difficulty
 	doif ov01 eq 0
 		setv va88 10
 	elif ov01 eq 1
@@ -1024,7 +1037,7 @@ scrp 1 1 64741 1011
 	else
 		setv va88 2
 	endi
-
+* Current diet
 	setv va11 ov11
 
 	enum 4 ov10 0
@@ -3975,3 +3988,82 @@ next
 enum 1 1 64748
 	kill targ
 next
+
+scrx 1 1 64741 1
+
+* Remove action scripts
+scrx 1 1 64741 1001
+* Spin Wheel
+scrx 1 1 64741 1002
+* Toggle Species
+scrx 1 1 64741 1003
+* Wheel Spin
+scrx 1 1 64741 1004
+* Timer Start
+scrx 1 1 64741 1005
+* Timer Tick
+scrx 1 1 64741 1006
+* Timer End
+scrx 1 1 64741 1007
+* Wheel Spin (Alternate)
+scrx 1 1 64741 1008
+* War Time
+scrx 1 1 64741 1009
+* Play Time
+scrx 1 1 64741 1010
+* Haste Time
+scrx 1 1 64741 1011
+* Feast
+scrx 1 1 64741 1012
+* Relocate One
+scrx 1 1 64741 1013
+* Relocate All
+scrx 1 1 64741 1014
+* Plague
+scrx 1 1 64741 1015
+* Love Time
+scrx 1 1 64741 1016
+* Heatwave
+scrx 1 1 64741 1017
+* Cold Snap
+scrx 1 1 64741 1018
+* Heal
+scrx 1 1 64741 1019
+* Stinger Attack
+
+* Remove scripts for panel interactions
+scrx 1 1 64741 1023
+* Geat Toggle
+scrx 1 1 64741 1025
+* Message Handler
+scrx 1 1 64741 1026
+* Unpause Script
+scrx 1 1 64741 1027
+* Pause Script
+scrx 1 1 64741 1028
+* Stop Script
+scrx 1 1 64741 1029
+* Interrupt Handler
+
+* Remove scripts for small panel interactions
+scrx 1 1 64741 1049
+* Small Panel Opener
+scrx 1 1 64741 1050
+* Small Panel Closer
+
+* Remove event availability toggler scripts
+scrx 1 1 64741 1100
+* Event Availability Toggler
+scrx 1 1 64741 1101
+* Custom Slider Adjuster
+scrx 1 1 64741 1102
+* Extra Toggle Adjuster
+scrx 1 1 64741 1103
+* Feast Setting Adjuster
+scrx 1 1 64741 1104
+* Feast Setting Adjuster 2
+scrx 1 1 64741 1105
+* Feast Setting Adjuster 3
+
+* Remove timer script
+scrx 1 1 64741 9

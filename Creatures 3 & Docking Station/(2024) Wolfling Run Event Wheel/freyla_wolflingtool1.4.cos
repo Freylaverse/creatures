@@ -335,6 +335,111 @@ scrp 1 1 64741 1003
 		setv va58 0
 	endi
 
+* Remove heal event if no one is sick 
+	doif ov61 ne 0
+		setv va00 0
+		inst
+		enum 4 va15 0
+*   Wounded
+			doif chem 90 gt 0.2
+				addv va00 1
+			endi
+*   Antigens 0 - 7
+			doif chem 82 gt 0.2
+				addv va00 1
+			endi
+			doif chem 83 gt 0.2
+				addv va00 1
+			endi
+			doif chem 84 gt 0.2
+				addv va00 1
+			endi
+			doif chem 85 gt 0.2
+				addv va00 1
+			endi
+			doif chem 86 gt 0.2
+				addv va00 1
+			endi
+			doif chem 87 gt 0.2
+				addv va00 1
+			endi
+			doif chem 88 gt 0.2
+				addv va00 1
+			endi
+			doif chem 89 gt 0.2
+				addv va00 1
+			endi
+*   Heavy Metals
+			doif chem 66 gt 0.2
+				addv va00 1
+			endi
+*   Cyanide
+			doif chem 67 gt 0.2
+				addv va00 1
+			endi
+*   Belladonna
+			doif chem 68 gt 0.2
+				addv va00 1
+			endi
+*   Geddonase
+			doif chem 69 gt 0.2
+				addv va00 1
+			endi
+*   Glycotoxin
+			doif chem 70 gt 0.2
+				addv va00 1
+			endi
+*   Sleep Toxin
+			doif chem 71 gt 0.2
+				addv va00 1
+			endi
+*   Fever Toxin
+			doif chem 72 gt 0.2
+				addv va00 1
+			endi
+*   Histamine A
+			doif chem 73 gt 0.2
+				addv va00 1
+			endi
+*   Histamine B
+			doif chem 74 gt 0.2
+				addv va00 1
+			endi
+*   Alcohol
+			doif chem 75 gt 0.2
+				addv va00 1
+			endi
+*   ATP Decoupler
+			doif chem 78 gt 0.2
+				addv va00 1
+			endi
+*   Carbon Monoxide
+			doif chem 79 gt 0.2
+				addv va00 1
+			endi
+*   Fear Toxin
+			doif chem 80 gt 0.2
+				addv va00 1
+			endi
+*   Muscle Toxin
+			doif chem 81 gt 0.2
+				addv va00 1
+			endi
+*   Lactate
+			doif chem 1 gt 0.2
+				addv va00 1
+			endi
+*   Lactic Acid
+			doif chem 61 gt 0.2
+				addv va00 1
+			endi
+		next
+		slow
+		doif va00 eq 0
+			setv va61 0
+		endi
+	endi
+
 * See if we have any events available
 	inst
 	setv va00 0
@@ -422,6 +527,7 @@ scrp 1 1 64741 1003
 			addv va00 va62
 			setv va62 va00
 		endi
+
 
 * Pick an event to trigger
 		setv va01 rand 0 va00
@@ -1946,6 +2052,11 @@ scrp 1 1 64741 1014
 	else
 		setv va50 10
 	endi
+	inst
+	enum 4 0 0
+	soul 3 0
+	next
+	slow
 	reps va50
 		inst
 		targ ownr
@@ -2054,7 +2165,11 @@ scrp 1 1 64741 1014
 		endi
 
 	repe
-
+	inst
+	enum 4 0 0
+	soul 3 1
+	next
+	slow
 	unlk
 	dbg: outs "WOLFLING TOOL: [END] Plague over"
 	mesg writ ownr 1029
@@ -2436,7 +2551,12 @@ scrp 1 1 64741 1018
 	endi
 	dbg: outs "WOLFLING TOOL: Initiating Heal"
 	lock
+		enum 4 0 0
+	soul 3 0
+	next
+	slow
 	doif ov16 eq 0
+	
 		reps ov81
 			targ ownr
 			rtar 4 ov10 0
@@ -2460,6 +2580,10 @@ scrp 1 1 64741 1018
 			sezz "eem feel better!"
 		next
 	endi
+		enum 4 0 0
+	soul 3 1
+	next
+	slow
 	dbg: outs "WOLFLING TOOL: [END] Heal over"
 	unlk
 	mesg writ ownr 1029

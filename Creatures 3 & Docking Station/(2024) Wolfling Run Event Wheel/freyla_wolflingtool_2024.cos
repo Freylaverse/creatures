@@ -920,6 +920,27 @@ scrp 1 1 64741 1009
 			else
 				kill targ
 			endi
+* Temp Gadgets!
+			new: simp 3 8 64735 "freyla_temptoys" 2 7 563
+			attr 199
+			doif va12 eq 1
+				tick 0
+			else
+				tick rand 750 1250
+			endi
+			setv ov12 va12
+			bhvr 47
+			perm 64
+			accg 2
+			elas 5
+			fric 99
+			emit 18 .5
+			velo rand -5 5 rand -5 9
+			doif tmvt va01 va02 eq 1
+				mvsf va01 va02
+			else
+				kill targ
+			endi
 		repe
 	next
 	dbg: outs "WOLFLING TOOL: [END] Play Time over"
@@ -941,6 +962,7 @@ scrp 2 21 64745 0
 		snde "pop1"
 		kill ownr
 	endi
+
 endm
 
 scrp 2 21 64745 1
@@ -992,6 +1014,102 @@ endm
 scrp 2 21 64745 9
 	inst
 	snde "pop1"
+	kill ownr
+endm
+
+* Temp Gadget Scripts
+
+scrp 3 8 64735 0
+	inst
+	stim writ from 90 1
+	targ ownr
+	lock
+	doif ov12 eq 1
+		snde "yes_"
+		anim [0 1 0 1 0]
+		velo rand -2 2 -5
+	else
+		accg -0.2
+		anim [0 1 0 1 0]
+		wait 20
+		snde "snap"
+		kill ownr
+	endi
+endm
+
+scrp 3 8 64735 1
+	inst
+	stim writ from 90 1
+	targ ownr
+	lock
+	doif ov12 eq 1
+		snde "yes_"
+		anim [0 1 0 1 0]
+		velo rand -2 2 -5
+	else
+		accg -0.2
+		anim [0 1 0 1 0]
+		wait 20
+		snde "snap"
+		kill ownr
+	endi
+endm
+
+scrp 3 8 64735 2
+	inst
+	stim writ from 90 1
+	targ ownr
+	lock
+	doif ov12 eq 1
+		snde "yes_"
+		anim [0 1 0 1 0]
+		velo rand -2 2 -5
+	else
+		accg -0.2
+		anim [0 1 0 1 0]
+		wait 20
+		snde "snap"
+		kill ownr
+	endi
+endm
+
+scrp 3 8 64735 3
+	inst
+	stim writ from 92 1
+	targ ownr
+	lock
+	doif ov12 eq 1
+		snde "yes_"
+		anim [0 1 0 1 0]
+		velo rand -2 2 -10
+	else
+		accg -0.2
+		anim [0 1 0 1 0]
+		wait 20
+		snde "snap"
+		kill ownr
+	endi
+endm
+
+scrp 3 8 64735 6
+	inst
+	setv va00 _p1_
+	setv va01 _p2_
+	absv va00
+	absv va01
+	doif va00 gt 20 or va01 gt 20 or rand 0 10 eq 0
+		sndc "yes_"
+	endi
+	anim [0 1 0 1 0]
+	urge shou 1 1 1
+endm
+
+scrp 3 8 64735 9
+	lock
+	accg -0.2
+	anim [0 1 0 1 0]
+	wait 20
+	snde "snap"
 	kill ownr
 endm
 
@@ -1409,7 +1527,7 @@ scrp 1 1 64741 1012
 		targ va00
 		cmrp posx posy 0
 		wait 10
-		accg 2
+		accg game "c3_creature_accg"
 		wait 30
 	retn
 
@@ -2054,7 +2172,7 @@ scrp 1 1 64741 1014
 	endi
 	inst
 	enum 4 0 0
-	soul 3 0
+		soul 3 0
 	next
 	slow
 	reps va50
@@ -2073,12 +2191,27 @@ scrp 1 1 64741 1014
 				accg -0.2
 				wait 10
 				inst
-				setv va01 rand 0 20
-				doif va01 eq 20
-					chem 86 va88
-					sezz "eem got antigen 4"
+				setv va01 rand 0 100
+				doif va01 le 5
+					divv va88 2
+					doif va01 eq 1
+						chem 87 va88
+						sezz "eem got antigen 5"
+					elif va01 eq 2
+						chem 79 va88
+						sezz "eem got carbon monoxide"
+					elif va01 eq 3
+						chem 81 va88
+						sezz "eem got muscle toxin"
+					elif va01 eq 4
+						chem 69 va88
+						sezz "eem got geddonase"
+					else
+						chem 70 va88
+						sezz "eem got glycotoxin"
+					endi
 				else
-					setv va01 rand 0 9
+					setv va01 rand 0 12
 					doif va01 eq 0
 						chem 73 va88
 						chem 74 va88
@@ -2107,12 +2240,21 @@ scrp 1 1 64741 1014
 					elif va01 eq 8
 						chem 85 va88
 						sezz "eem got antigen 3"
+					elif va01 eq 9
+						chem 86 va88
+						sezz "eem got antigen 4"
+					elif va01 eq 10
+						chem 88 va88
+						sezz "eem got antigen 6"
+					elif va01 eq 11
+						chem 89 va88
+						sezz "eem got antigen 7"
 					else
 						sezz "sike"
 					endi
 				endi
 				wait 10
-				accg 2
+				accg game "c3_creature_accg"
 				wait 20
 			next
 		else
@@ -2121,12 +2263,27 @@ scrp 1 1 64741 1014
 			accg -0.2
 			wait 10
 			inst
-			setv va01 rand 0 20
-			doif va01 eq 20
-				chem 86 va88
-				sezz "eem got antigen 4"
+			setv va01 rand 0 100
+			doif va01 le 5
+				divv va88 2
+				doif va01 eq 1
+					chem 87 va88
+					sezz "eem got antigen 5"
+				elif va01 eq 2
+					chem 79 va88
+					sezz "eem got carbon monoxide"
+				elif va01 eq 3
+					chem 68 va88
+					sezz "eem got belladonna"
+				elif va01 eq 4
+					chem 69 va88
+					sezz "eem got geddonase"
+				else
+					chem 70 va88
+					sezz "eem got glycotoxin"
+				endi
 			else
-				setv va01 rand 0 9
+				setv va01 rand 0 12
 				doif va01 eq 0
 					chem 73 va88
 					chem 74 va88
@@ -2155,19 +2312,28 @@ scrp 1 1 64741 1014
 				elif va01 eq 8
 					chem 85 va88
 					sezz "eem got antigen 3"
+				elif va01 eq 9
+					chem 86 va88
+					sezz "eem got antigen 4"
+				elif va01 eq 10
+					chem 88 va88
+					sezz "eem got antigen 6"
+				elif va01 eq 11
+					chem 89 va88
+					sezz "eem got antigen 7"
 				else
 					sezz "sike"
 				endi
 			endi
 			wait 10
-			accg 2
+			accg game "c3_creature_accg"
 			wait 20
 		endi
 
 	repe
 	inst
 	enum 4 0 0
-	soul 3 1
+		soul 3 1
 	next
 	slow
 	unlk
@@ -2551,12 +2717,12 @@ scrp 1 1 64741 1018
 	endi
 	dbg: outs "WOLFLING TOOL: Initiating Heal"
 	lock
-		enum 4 0 0
-	soul 3 0
+	enum 4 0 0
+		soul 3 0
 	next
 	slow
 	doif ov16 eq 0
-	
+
 		reps ov81
 			targ ownr
 			rtar 4 ov10 0
@@ -2569,9 +2735,9 @@ scrp 1 1 64741 1018
 			accg 0
 			velo 0 0
 			wait 10
-			accg 2
+			accg game "c3_creature_accg"
 			wait 20
-			accg 2
+			accg game "c3_creature_accg"
 		repe
 	else
 		inst
@@ -2580,8 +2746,8 @@ scrp 1 1 64741 1018
 			sezz "eem feel better!"
 		next
 	endi
-		enum 4 0 0
-	soul 3 1
+	enum 4 0 0
+		soul 3 1
 	next
 	slow
 	dbg: outs "WOLFLING TOOL: [END] Heal over"
@@ -2987,6 +3153,7 @@ scrp 1 1 64741 1028
 	else
 		snde "buzz"
 	endi
+	urge writ targ -1 2 -1 2
 	setv ov17 0
 	setv ov19 0
 endm
@@ -4069,7 +4236,7 @@ endm
 
 rscr
 enum 4 0 0
-	accg 2
+	accg game "c3_creature_accg"
 	doif wpau eq 0
 		paus 0
 	endi
